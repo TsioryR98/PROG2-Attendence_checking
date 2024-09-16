@@ -61,11 +61,32 @@ public class StudentRepository implements StudentDAO{
 
     @Override
     public Student updateStudent(int id, Student studentUpdate) {
-        return null;
+        String query =  "UPDATE student SET  email=?, phone_number=?, enrollment_date=?, academic_year=? WHERE id_student=?";
+        try(Connection conn = dataBaseConnect.getConnection();
+            PreparedStatement statement = conn.prepareStatement(query)){
+            statement.setString(1, studentUpdate.getStudentEmail());
+            statement.setString(2, studentUpdate.getPhoneNumber());
+            statement.setObject(3, Timestamp.valueOf(studentUpdate.getEnrollmentDate()));
+            statement.setString(4, String.valueOf(studentUpdate.getAcademicYear())) ;
+            statement.setInt(5, studentUpdate.getStudentId());
+
+            statement.executeUpdate();
+            return studentUpdate;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating student", e);
+        }
     }
 
     @Override
-    public void deleteStudent(int id) {
+    public void deleteStudent(int idStudent) {
+        String query = "DELETE FROM student WHERE id=?";
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, idStudent);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting student", e);
+        }
 
     }
 }
