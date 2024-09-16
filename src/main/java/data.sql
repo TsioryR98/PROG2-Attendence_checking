@@ -33,7 +33,7 @@ CREATE TABLE Student (
 
 -- Enrollment table
 CREATE TABLE Enrollment (
-     id_enrollment INT PRIMARY KEY,
+    id_enrollment INT PRIMARY KEY,
     id_student INT,
     id_course INT,
     enrollment_date DATE NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE Convocation (
 
 -- Summon table
 CREATE TABLE Summon (
-       id_summon INT PRIMARY KEY,
+        id_summon INT PRIMARY KEY,
         id_convocation INT,
         id_student INT,
         summon_date DATE NOT NULL,
