@@ -8,6 +8,6 @@ public interface StudentDAO {
 
     void create(Student newStudent);
     List<Student> showAll();
-    Student updateStudent(int id, Student studentUpdate);
-    void deleteStudent (int id);
+    Student updateById(int id, Student studentUpdate);
+    void deleteById(int id);
 }

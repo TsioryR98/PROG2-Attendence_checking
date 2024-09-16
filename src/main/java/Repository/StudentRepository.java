@@ -2,12 +2,13 @@ package Repository;
 
 import Models.AcademicYear;
 import Models.Student;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@Repository
 public class StudentRepository implements StudentDAO{
     DataBaseConnect dataBaseConnect = new DataBaseConnect();
 
@@ -60,7 +61,7 @@ public class StudentRepository implements StudentDAO{
     }
 
     @Override
-    public Student updateStudent(int id, Student studentUpdate) {
+    public Student updateById(int id, Student studentUpdate) {
         String query =  "UPDATE student SET  email=?, phone_number=?, enrollment_date=?, academic_year=? WHERE id_student=?";
         try(Connection conn = dataBaseConnect.getConnection();
             PreparedStatement statement = conn.prepareStatement(query)){
@@ -78,7 +79,7 @@ public class StudentRepository implements StudentDAO{
     }
 
     @Override
-    public void deleteStudent(int idStudent) {
+    public void deleteById(int idStudent) {
         String query = "DELETE FROM student WHERE id=?";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
