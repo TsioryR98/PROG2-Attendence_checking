@@ -15,49 +15,49 @@ academicYear VARCHAR(10) CHECK (academicYear = 'L1' OR academicYear = 'L2' OR ac
 );
 
 -- Table Teacher
-    CREATE TABLE Teacher (
-                             teacherId int PRIMARY KEY,
-                             lastName VARCHAR(255) NOT NULL,
-                             firstName VARCHAR(255) NOT NULL,
-                             email VARCHAR(255) NOT NULL UNIQUE,
-                             phoneNumber VARCHAR(15)
-    );
+CREATE TABLE Teacher (
+teacherId int PRIMARY KEY,
+lastName VARCHAR(255) NOT NULL,
+firstName VARCHAR(255) NOT NULL,
+email VARCHAR(255) NOT NULL UNIQUE,
+phoneNumber VARCHAR(15)
+);
 
 -- Table Course
-    CREATE TABLE Course (
-                            courseId int PRIMARY KEY,
-                            courseName VARCHAR(255) NOT NULL,
-                            teacherId INT NOT NULL,
-                            FOREIGN KEY (teacherId) REFERENCES Teacher(teacherId) ON DELETE CASCADE
-    );
+CREATE TABLE Course (
+courseId int PRIMARY KEY,
+courseName VARCHAR(255) NOT NULL,
+teacherId INT NOT NULL,
+FOREIGN KEY (teacherId) REFERENCES Teacher(teacherId) ON DELETE CASCADE
+);
 
 -- Table Session
-    CREATE TABLE Session (
-                             sessionId int PRIMARY KEY,
-                             sessionDate TIMESTAMP NOT NULL,
-                             courseId INT NOT NULL,
-                             FOREIGN KEY (courseId) REFERENCES Course(courseId) ON DELETE CASCADE
-    );
+CREATE TABLE Session (
+sessionId int PRIMARY KEY,
+sessionDate TIMESTAMP NOT NULL,
+courseId INT NOT NULL,
+FOREIGN KEY (courseId) REFERENCES Course(courseId) ON DELETE CASCADE
+ );
 
 -- Table Enrollment
-    CREATE TABLE Enrollment (
-                                idEnrollment int PRIMARY KEY,
-                                studentId INT NOT NULL,
-                                courseId INT NOT NULL,
-                                FOREIGN KEY (studentId) REFERENCES Student(studentId) ON DELETE CASCADE,
-                                FOREIGN KEY (courseId) REFERENCES Course(courseId) ON DELETE CASCADE
-    );
+CREATE TABLE Enrollment (
+idEnrollment int PRIMARY KEY,
+studentId INT NOT NULL,
+courseId INT NOT NULL,
+FOREIGN KEY (studentId) REFERENCES Student(studentId) ON DELETE CASCADE,
+FOREIGN KEY (courseId) REFERENCES Course(courseId) ON DELETE CASCADE
+ );
 
 -- Table Attendance
-    CREATE TABLE Attendance (
-                                attendenceId int PRIMARY KEY,
-                                attendingStatus VARCHAR(10) CHECK (attendingStatus = 'MISSING' OR attendingStatus = 'ATTENDING') NOT NULL,
-                                justifiedStatus VARCHAR(15) CHECK (justifiedStatus = 'JUSTIFIED' OR justifiedStatus = 'NOT_JUSTIFIED') NOT NULL,
-                                proof TEXT,
-                                sessionId INT NOT NULL,
-                                studentId INT NOT NULL,
-                                FOREIGN KEY (sessionId) REFERENCES Session(sessionId) ON DELETE CASCADE,
-                                FOREIGN KEY (studentId) REFERENCES Student(studentId) ON DELETE CASCADE
+CREATE TABLE Attendance (
+attendenceId int PRIMARY KEY,
+attendingStatus VARCHAR(10) CHECK (attendingStatus = 'MISSING' OR attendingStatus = 'ATTENDING') NOT NULL,
+justifiedStatus VARCHAR(15) CHECK (justifiedStatus = 'JUSTIFIED' OR justifiedStatus = 'NOT_JUSTIFIED') NOT NULL,
+proof TEXT,
+sessionId INT NOT NULL,
+studentId INT NOT NULL,
+FOREIGN KEY (sessionId) REFERENCES Session(sessionId) ON DELETE CASCADE,
+FOREIGN KEY (studentId) REFERENCES Student(studentId) ON DELETE CASCADE
     );
 
 
@@ -70,4 +70,13 @@ academicYear VARCHAR(10) CHECK (academicYear = 'L1' OR academicYear = 'L2' OR ac
     (6, 'Girard', 'François', '1997-12-05', 'francois.girard@example.com', '0187654321', '2023-09-01', 'L3')
     ON CONFLICT (studentId) DO NOTHING;
 
+INSERT INTO Teacher (teacherId, lastName, firstName, email, phoneNumber) VALUES
+(1, 'Leblanc', 'Pierre', 'pierre.leblanc@example.com', '0600000001'),
+(2, 'Garnier', 'Lucie', 'lucie.garnier@example.com', '0600000002'),
+(3, 'Rousseau', 'Clara', 'clara.rousseau@example.com', '0600000003'),
+(4, 'Dufresne', 'Thomas', 'thomas.dufresne@example.com', '0600000004'),
+(5, 'Dupuis', 'Isabelle', 'isabelle.dupuis@example.com', '0600000005'),
+(6, 'Barre', 'François', 'francois.barre@example.com', '0600000006'),
+(7, 'Lemoine', 'Elise', 'elise.lemoine@example.com', '0600000007'),
+(8, 'Vidal', 'Jacques', 'jacques.vidal@example.com', '0600000008');
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+
 public class StudentRepository implements GenericDAO <Student> {
     DataBaseConnect dataBaseConnect = new DataBaseConnect();
 

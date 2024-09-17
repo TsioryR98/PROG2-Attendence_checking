@@ -7,16 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+
 public class StudentController {
     private final StudentService studentService;
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
-    }
-
-    @GetMapping("/")
-    public String hello() {
-        return "Hello World";
     }
 
     @GetMapping("/student")

@@ -5,9 +5,9 @@ import Models.Student;
 import java.util.List;
 
 public interface GenericDAO <Model>{
-    void create(Student newStudent);
-    List<Student> showAll();
-    Student update(int id, Student studentUpdate);
+    void create(Model newModel);
+    List<Model> showAll();
+    Model update(int id, Model modelUpdate);
     void delete(int id);
-    Student read(int studentId);
+    Model read(int modelId);
 }
