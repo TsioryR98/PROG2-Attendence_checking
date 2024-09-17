@@ -7,12 +7,12 @@ import lombok.Setter;
 @Setter
 public class Enrollment {
     private int idEnrollment;
-    private Student idStudentFK;
-    private Course idCourse;
+    private Student student;
+    private Course course;
 
-    public Enrollment(Course idCourse, Student idStudentFK, int idEnrollment) {
-        this.idCourse = idCourse;
-        this.idStudentFK = idStudentFK;
+    public Enrollment(Course course, Student student, int idEnrollment) {
+        this.course = course;
+        this.student = student;
         this.idEnrollment = idEnrollment;
     }
 }

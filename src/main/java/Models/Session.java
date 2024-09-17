@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 public class Session {
     private int sessionId;
     private LocalDateTime sessionDate;
-    private Course idCourseFK;
+    private Course course;
 
-    public Session(int sessionId, LocalDateTime sessionDate, Course idCourseFK) {
+    public Session(int sessionId, LocalDateTime sessionDate, Course course) {
         this.sessionId = sessionId;
         this.sessionDate = sessionDate;
-        this.idCourseFK = idCourseFK;
+        this.course = course;
     }
 }

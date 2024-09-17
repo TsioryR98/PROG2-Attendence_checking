@@ -13,7 +13,7 @@ public class DataBaseConnect {
     public Connection getConnection() {
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/todolist", "postgres", "tsiory98");
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/attendance_checking", "postgres", "tsiory98");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

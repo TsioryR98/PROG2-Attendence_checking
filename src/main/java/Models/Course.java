@@ -8,10 +8,10 @@ import lombok.Setter;
 public class Course {
     private int courseId;
     private String courseName;
-    private Teacher idTeacherFK;
+    private Teacher teacher;
 
-    public Course(Teacher idTeacherFK, String courseName, int courseId) {
-        this.idTeacherFK = idTeacherFK;
+    public Course(Teacher teacher, String courseName, int courseId) {
+        this.teacher = teacher;
         this.courseName = courseName;
         this.courseId = courseId;
     }

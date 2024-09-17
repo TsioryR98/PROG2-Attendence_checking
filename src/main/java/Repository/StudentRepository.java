@@ -8,13 +8,14 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 @Repository
-public class StudentRepository implements StudentDAO{
+public class StudentRepository implements GenericDAO <Student> {
     DataBaseConnect dataBaseConnect = new DataBaseConnect();
 
     @Override
     public void create(Student newStudent) {
-        String query = "INSERT INTO student (id_student, last_name, first_name, date_of_birth, email, phone_number, enrollment_date, academic_year ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO student (studentId, lastName, firstName, dateOfBirth, studentEmail, phoneNumber, enrollmentDate, academicYear) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
 
@@ -43,33 +44,34 @@ public class StudentRepository implements StudentDAO{
 
             while (result.next()) {
                 Student studentAdd = new Student(
-                        result.getInt("id"),
-                        result.getString("last_name"),
-                        result.getString("first_name"),
-                        result.getObject("date_of_birth", LocalDateTime.class),
-                        result.getString("email"),
-                        result.getString("phone_number"),
-                        result.getObject("enrollment_date", LocalDateTime.class),
-                        AcademicYear.valueOf(result.getString("academic_year"))
+                        result.getInt("studentId"),
+                        result.getString("lastName"),
+                        result.getString("firstName"),
+                        result.getObject("dateOfBirth", LocalDateTime.class),
+                        result.getString("studentEmail"),
+                        result.getString("phoneNumber"),
+                        result.getObject("enrollmentDate", LocalDateTime.class),
+                        AcademicYear.valueOf(result.getString("academicYear"))
                 );
                 studentList.add(studentAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading one student", e);
+            throw new RuntimeException("Error reading student", e);
         }
         return studentList;
     }
 
+
     @Override
-    public Student updateById(int id, Student studentUpdate) {
-        String query =  "UPDATE student SET  email=?, phone_number=?, enrollment_date=?, academic_year=? WHERE id_student=?";
-        try(Connection conn = dataBaseConnect.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)){
+    public Student update(int studentId, Student studentUpdate) {
+        String query = "UPDATE student SET studentEmail=?, phoneNumber=?, enrollmentDate=?, academicYear=? WHERE studentId=?";
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, studentUpdate.getStudentEmail());
             statement.setString(2, studentUpdate.getPhoneNumber());
             statement.setObject(3, Timestamp.valueOf(studentUpdate.getEnrollmentDate()));
-            statement.setString(4, String.valueOf(studentUpdate.getAcademicYear())) ;
-            statement.setInt(5, studentUpdate.getStudentId());
+            statement.setString(4, studentUpdate.getAcademicYear().name());
+            statement.setInt(5, studentId);
 
             statement.executeUpdate();
             return studentUpdate;
@@ -79,15 +81,43 @@ public class StudentRepository implements StudentDAO{
     }
 
     @Override
-    public void deleteById(int idStudent) {
-        String query = "DELETE FROM student WHERE id=?";
+    public void delete(int studentId) {
+        String query = "DELETE FROM student WHERE studentId=?";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setInt(1, idStudent);
+            statement.setInt(1, studentId);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error deleting student", e);
         }
+    }
 
+    @Override
+    public Student read(int studentId) {
+        Student studentRead = null;
+        String query = "SELECT * FROM student WHERE studentId=?";
+
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+
+            statement.setInt(1, studentId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                studentRead = new Student(
+                        result.getInt("studentId"),
+                        result.getString("lastName"),
+                        result.getString("firstName"),
+                        result.getObject("dateOfBirth", LocalDateTime.class),
+                        result.getString("studentEmail"),
+                        result.getString("phoneNumber"),
+                        result.getObject("enrollmentDate", LocalDateTime.class),
+                        AcademicYear.valueOf(result.getString("academicYear"))
+                );
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading Student", e);
+        }
+        return studentRead;
     }
 }
