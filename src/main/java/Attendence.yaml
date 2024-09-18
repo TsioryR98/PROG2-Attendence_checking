@@ -1,151 +1,270 @@
-openapi: 3.0.3
-info:
-  title: Attendance Checking
-  description: Manage attendance in school
-  version: 1.0.0
-servers:
-  - url: http://localhost:8080
-paths:
-  /student:
-    get:
-      tags:
-        - Student
-      summary: Get all students inside the school
-      operationId: showAllStudent
-      responses:
-        '200':
-          description: List of students
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
+  openapi: 3.0.3
+  info:
+    title: Attendance Checking
+    description: Manage attendance in school
+    version: 1.0.0
+  servers:
+    - url: http://localhost:8080
+  paths:
+    /student:
+      get:
+        tags:
+          - Student
+        summary: Get all students inside the school
+        operationId: showAllStudent
+        responses:
+          '200':
+            description: List of students
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Student'
+    /student/{studentId}:
+      get:
+        tags:
+          - Student
+        summary: Get a student by ID
+        operationId: readOne
+        parameters:
+          - name: studentId
+            in: path
+            required: true
+            description: ID of the student to retrieve
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: Student details
+            content:
+              application/json:
+                schema:
                   $ref: '#/components/schemas/Student'
-  /student/{studentId}:
-    get:
-      tags:
-        - Student
-      summary: Get a student by ID
-      operationId: readOne
-      parameters:
-        - name: studentId
-          in: path
+          '400':
+            description: Student not found
+      delete:
+        tags:
+          - Student
+        summary: Delete a student by ID
+        operationId: deleteStudent
+        parameters:
+          - name: api_key
+            in: header
+            description: API key for authorization (optional)
+            required: false
+            schema:
+              type: string
+          - name: studentId
+            in: path
+            required: true
+            description: ID of the student to delete
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: Student deleted successfully, no content returned
+          '400':
+            description: StudentId not found
+      put:
+        tags:
+          - Student
+        summary: Update a student by ID
+        operationId: updateStudent
+        parameters:
+          - name: studentId
+            in: path
+            required: true
+            description: ID of the student to update
+            schema:
+              type: integer
+              format: int64
+        requestBody:
+          description: Student object that needs to be updated
           required: true
-          description: ID of the student to retrieve
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Student details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Student'
-        '404':
-          description: Student not found
-    delete:
-      tags:
-        - Student
-      summary: Delete a student by ID
-      operationId: deleteStudent
-      parameters:
-        - name: api_key
-          in: header
-          description: API key for authorization (optional)
-          required: false
-          schema:
+        responses:
+          '200':
+            description: Updated student details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Student'
+          '400':
+            description: Student not found
+    /newStudent:
+      post:
+        tags:
+          - Student
+        summary: Add a new student
+        description: Add a new Student
+        operationId: createNewStudent
+        requestBody:
+          description: Student object that needs to be created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          required: true
+        responses:
+          '200':
+            description: Student created successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Student'
+          '400':
+            description: Invalid input
+    /teacher:
+      get:
+        tags:
+          - Teacher
+        summary: Get all teachers inside the school
+        operationId: getAllTeachers
+        responses:
+          '200':
+            description: List of teachers
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Teacher'
+    /newTeacher:
+      post:
+        tags:
+          - Teacher
+        summary: Add a new Teacher
+        description: Add a new Teacher
+        operationId: createTeacher
+        requestBody:
+          description: Teacher object that needs to be created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+          required: true
+        responses:
+          '200':
+            description: Teacher created successfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Teacher'
+          '400':
+            description: Invalid input
+    /teacher/{teacherId}:
+      get:
+        tags:
+          - Teacher
+        summary: Get a Teacher by ID
+        operationId: getTeacherById
+        parameters:
+          - name: teacherId
+            in: path
+            required: true
+            description: ID of the teacher to retrieve
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: Teacher details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Teacher'
+          '400':
+            description: Teacher not found
+      delete:
+        tags:
+          - Teacher
+        summary: Delete a Teacher by ID
+        operationId: deleteTeacher
+        parameters:
+          - name: teacherId
+            in: path
+            required: true
+            description: ID of the teacher to delete
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: Teacher deleted successfully
+          '400':
+            description: TeacherId not found
+      put:
+        tags:
+          - Teacher
+        summary: Update a teacher by ID
+        operationId: updateTeacher
+        parameters:
+          - name: teacherId
+            in: path
+            required: true
+            description: ID of the teacher to update
+            schema:
+              type: integer
+              format: int64
+        requestBody:
+          description: Teacher object that needs to be updated
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teacher'
+        responses:
+          '200':
+            description: Updated teacher details
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Teacher'
+          '400':
+            description: Teacher not found
+  components:
+    schemas:
+      Student:
+        type: object
+        properties:
+          studentId:
+            type: integer
+          lastName:
             type: string
-        - name: studentId
-          in: path
-          required: true
-          description: ID of the student to delete
-          schema:
+          firstName:
+            type: string
+          dateOfBirth:
+            type: string
+            format: date-time
+          studentEmail:
+            type: string
+          phoneNumber:
+            type: string
+          enrollmentDate:
+            type: string
+            format: date-time
+          academicYear:
+            $ref: '#/components/schemas/AcademicYear'
+      AcademicYear:
+        type: string
+        enum:
+          - L1
+          - L2
+          - L3
+      Teacher:
+        type: object
+        properties:
+          teacherId:
             type: integer
-            format: int64
-      responses:
-        '204':
-          description: Student deleted successfully, no content returned
-        '404':
-          description: StudentId not found
-    put:
-      tags:
-        - Student
-      summary: Update a student by ID
-      operationId: updateStudent
-      parameters:
-        - name: studentId
-          in: path
-          required: true
-          description: ID of the student to update
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        description: Student object that needs to be updated
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Student'
-      responses:
-        '200':
-          description: Updated student details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Student'
-        '404':
-          description: Student not found
-  /newStudent:
-    post:
-      tags:
-        - Student
-      summary: Add a new student
-      description: Add a new Student
-      operationId: createNewStudent
-      requestBody:
-        description: Student object that needs to be created
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Student'
-        required: true
-      responses:
-        '200':
-          description: Student created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Student'
-        '400':
-          description: Invalid input
-
-components:
-  schemas:
-    Student:
-      type: object
-      properties:
-        studentId:
-          type: integer
-        lastName:
-          type: string
-        firstName:
-          type: string
-        dateOfBirth:
-          type: string
-          format: date-time
-        studentEmail:
-          type: string
-        phoneNumber:
-          type: string
-        enrollmentDate:
-          type: string
-          format: date-time
-        academicYear:
-          $ref: '#/components/schemas/AcademicYear'
-    AcademicYear:
-      type: string
-      enum:
-        - L1
-        - L2
-        - L3
+          lastName:
+            type: string
+          firstName:
+            type: string
+          contact:
+            type: string
+          teacherAddress:
+            type: string
