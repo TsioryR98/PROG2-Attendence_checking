@@ -349,3 +349,4 @@ VALUES
     GROUP BY s.studentId, s.lastName, s.firstName;
 
 
+--15. group by academic year , absence de tous les L1, L2, L3
