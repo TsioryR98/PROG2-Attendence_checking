@@ -61,9 +61,9 @@ public class SessionRepository implements GenericDAO<Session>{
         String query = "UPDATE session SET sessionDate=?, courseId=? WHERE sessionId=?";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setObject(1, (sessionUpdate.getSessionDate())); // Convert LocalDateTime to Timestamp
+            statement.setObject(1, (sessionUpdate.getSessionDate()));
             statement.setInt(2, sessionUpdate.getCourse().getCourseId());
-            statement.setInt(3, sessionId);
+            statement.setInt(3, sessionUpdate.getSessionId());
 
             statement.executeUpdate();
             return sessionUpdate;
