@@ -16,11 +16,11 @@ public class EnrollmentController {
         this.enrollmentService = enrollmentService;
     }
 
-    @GetMapping("/student/course")
+    @GetMapping("/enrollments/course")
     public List<Enrollment> getAllStudentWithCourse(){
         return enrollmentService.getAllStudentWithCourse();
     }
-    @GetMapping("/student/course/{courseId}")
+    @GetMapping("/enrollments/course/{courseId}")
     public List<Enrollment> getStudentsWithCourseById(@PathVariable int courseId){
         return enrollmentService.getStudentsWithCourseById(courseId);
     }
