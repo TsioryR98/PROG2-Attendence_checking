@@ -1,10 +1,9 @@
 package Controller;
 
+import Models.Course;
 import Models.Enrollment;
 import Service.EnrollmentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +22,26 @@ public class EnrollmentController {
     @GetMapping("/enrollments/course/{courseId}")
     public List<Enrollment> getStudentsWithCourseById(@PathVariable int courseId){
         return enrollmentService.getStudentsWithCourseById(courseId);
+    }
+    /*  /enrollments/{enrollmentId}:*/
+    @PostMapping("/enrollments")
+    public void createNewEnroll(@RequestBody Enrollment newEnrollment){
+        enrollmentService.createNewEnroll(newEnrollment);
+    }
+    @GetMapping("/enrollments")
+    public List<Enrollment> getAllEnrollment(){
+        return enrollmentService.getAllEnrollment();
+    }
+    @PutMapping("/enrollments/{enrollmentId}")
+    public Enrollment updateEnrollById(@PathVariable int enrollmentId, @RequestBody Enrollment enrollmentUpdate){
+        return enrollmentService.updateEnrollById(enrollmentId,enrollmentUpdate);
+    }
+    @DeleteMapping("/enrollments/{enrollmentId}")
+    public void deleteEnrollById(@PathVariable int enrollmentId){
+        enrollmentService.deleteEnrollById(enrollmentId);
+    }
+    @GetMapping("/enrollments/{enrollmentId}")
+    public Enrollment readEnrollById(@PathVariable int enrollmentId){
+        return enrollmentService.readEnrollById(enrollmentId);
     }
 }
