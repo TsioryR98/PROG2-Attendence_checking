@@ -31,19 +31,16 @@ public class EnrollmentRepository {
                 String studentEmail = result.getString("studentEmail");
                 int courseId = result.getInt("courseId");
                 String enrolledCourseName = result.getString("courseName");
-
                 // Student object
                 Student student = new Student();
                 student.setStudentId(studentId);
                 student.setLastName(studentLastName);
                 student.setFirstName(studentFirstName);
                 student.setStudentEmail(studentEmail);
-
                 // Course object
                 Course course = new Course();
                 course.setCourseId(courseId);
                 course.setCourseName(enrolledCourseName);
-
                 // Enrollment object
                 Enrollment enrollment = new Enrollment(result.getInt("idEnrollment"),student,course);
                 enrollmentList.add(enrollment);
@@ -65,7 +62,6 @@ public class EnrollmentRepository {
         List<Enrollment> enrollmentList = new ArrayList<>();
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-
             statement.setInt(1, courseId);
 
             try (ResultSet result = statement.executeQuery()) {
@@ -76,14 +72,12 @@ public class EnrollmentRepository {
                     String studentEmail = result.getString("studentEmail");
                     int enrolledCourseId = result.getInt("courseId");
                     String enrolledCourseName = result.getString("courseName");
-
                     // Student object
                     Student student = new Student();
                     student.setStudentId(studentId);
                     student.setLastName(studentLastName);
                     student.setFirstName(studentFirstName);
                     student.setStudentEmail(studentEmail);
-
                     // Course object
                     Course course = new Course();
                     course.setCourseId(enrolledCourseId);

@@ -208,7 +208,7 @@ VALUES
     JOIN Course c ON e.courseId=c.courseId
     WHERE e.courseId=1;
 
---OK--2. Requête pour obtenir les cours enseignés par un professeur spécifique
+--OK--2. Requête pour obtenir les cours enseignés par un professeur spécifique ou tous les profs
 
     SELECT c.courseId, c.courseName, t.firstName,t.lastName,t.email
     FROM Course c
@@ -221,19 +221,16 @@ VALUES
 
 ---3. Requête pour obtenir l'assiduité des étudiants pour une session spécifique
 
-    SELECT ses.sessionDate,
-           c.courseName,
-           s.studentId,
-           s.firstName,
-           s.lastName,
-           a.attendingStatus,
-           a.justifiedStatus
-    FROM Attendance a
-    JOIN Student s ON a.studentId = s.studentId
-    JOIN Session ses ON a.sessionId = ses.sessionId
-    JOIN Course c ON ses.courseId = c.courseId
-    WHERE a.sessionId = 1
-    ORDER BY s.studentId ASC;
+SELECT a.attendenceId,ses.sessionDate,s.studentId,
+s.firstName,s.lastName,s.academicYear,a.attendingStatus,
+a.justifiedStatus
+FROM Attendance a
+JOIN Student s ON a.studentId = s.studentId
+JOIN Session ses ON a.sessionId = ses.sessionId
+WHERE a.sessionId = 1
+GROUP BY s.academicYear, a.attendenceId, ses.sessionDate, s.studentId,
+s.firstName, s.lastName, a.attendingStatus, a.justifiedStatus
+ORDER BY s.studentId ASC;
 
 
 ---4. Requête pour obtenir toutes les sessions d'un cours spécifique
