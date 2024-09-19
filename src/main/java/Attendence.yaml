@@ -264,7 +264,7 @@ paths:
         - Courses
       summary: Retrieve a single course by ID
       parameters:
-        - name: id
+        - name: courseId
           in: path
           required: true
           schema:
@@ -278,13 +278,12 @@ paths:
                 $ref: '#/components/schemas/Course'
         '404':
           description: Course not found
-
     put:
       tags:
         - Courses
       summary: Update a course by ID
       parameters:
-        - name: id
+        - name: courseId
           in: path
           required: true
           schema:
@@ -307,7 +306,7 @@ paths:
         - Courses
       summary: Delete a course by ID
       parameters:
-        - name: id
+        - name: courseId
           in: path
           required: true
           schema:
@@ -394,7 +393,7 @@ paths:
         - Sessions
       summary: Retrieve a single session by ID
       parameters:
-        - name: id
+        - name: sessionId
           in: path
           required: true
           schema:
@@ -414,7 +413,7 @@ paths:
         - Sessions
       summary: Update a session by ID
       parameters:
-        - name: id
+        - name: sessionId
           in: path
           required: true
           schema:
@@ -438,7 +437,7 @@ paths:
         - Sessions
       summary: Delete a session by ID
       parameters:
-        - name: id
+        - name: sessionId
           in: path
           required: true
           schema:
@@ -486,7 +485,7 @@ paths:
         - Attendances
       summary: Retrieve a single attendance record by ID
       parameters:
-        - name: id
+        - name: attendanceId
           in: path
           required: true
           schema:
@@ -506,7 +505,7 @@ paths:
         - Attendances
       summary: Update an attendance record by ID
       parameters:
-        - name: id
+        - name: attendanceId
           in: path
           required: true
           schema:
@@ -530,7 +529,7 @@ paths:
         - Attendances
       summary: Delete an attendance record by ID
       parameters:
-        - name: id
+        - name: attendanceId
           in: path
           required: true
           schema:
@@ -601,7 +600,7 @@ paths:
         - Enrollments
       summary: Retrieve a single enrollment by ID
       parameters:
-        - name: id
+        - name: enrollmentId
           in: path
           required: true
           schema:
@@ -621,7 +620,7 @@ paths:
         - Enrollments
       summary: Update an enrollment by ID
       parameters:
-        - name: id
+        - name: enrollmentId
           in: path
           required: true
           schema:
@@ -645,7 +644,7 @@ paths:
         - Enrollments
       summary: Delete an enrollment by ID
       parameters:
-        - name: id
+        - name: enrollmentId
           in: path
           required: true
           schema:
@@ -726,13 +725,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Convocation'
 
-  /convocations/{id}:
+  /convocations/{convocationId}:
     get:
       tags:
         - Convocations
       summary: Retrieve a single convocation by ID
       parameters:
-        - name: id
+        - name: convocationId
           in: path
           required: true
           schema:
@@ -752,7 +751,7 @@ paths:
         - Convocations
       summary: Update a convocation by ID
       parameters:
-        - name: id
+        - name: convocationId
           in: path
           required: true
           schema:
@@ -775,7 +774,7 @@ paths:
         - Convocations
       summary: Delete a convocation by ID
       parameters:
-        - name: id
+        - name: convocationId
           in: path
           required: true
           schema:
