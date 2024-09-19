@@ -1,10 +1,9 @@
 package Controller;
 
 import Models.Attendance;
+import Models.Session;
 import Service.AttendanceService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,9 +13,30 @@ public class AttendenceController {
     public AttendenceController(AttendanceService attendanceService) {
         this.attendanceService = attendanceService;
     }
-    @GetMapping("/attendance/session/{sessionId}")
+    @GetMapping("/attendances/session/{sessionId}")
     public List<Attendance> getAttendanceBySessionId(@PathVariable int sessionId){
         return attendanceService.getAttendanceBySessionId(sessionId);
+    }
+
+    @PostMapping("/attendances")
+    public void createNewAttendence(@RequestBody Attendance newAttendance){
+        attendanceService.createNewAttendence(newAttendance);
+    }
+    @GetMapping("/attendances")
+    public List<Attendance> showAllAttendence(){
+        return attendanceService.showAllAttendence();
+    }
+    @PutMapping("/attendances/{attendanceId}")
+    public Attendance updateAttendenceById(@PathVariable int attendanceId, @RequestBody Attendance attendanceUpdate){
+        return attendanceService.updateAttendence(attendanceId, attendanceUpdate);
+    }
+    @DeleteMapping("/attendances/{attendanceId}")
+    public void deleteAttendenceById(@PathVariable int attendanceId){
+        attendanceService.deleteAttendence(attendanceId);
+    }
+    @GetMapping("/attendances/{attendanceId}")
+    public Attendance readAttendenceById(@PathVariable int attendanceId){
+        return attendanceService.readAttendence(attendanceId);
     }
 
 }

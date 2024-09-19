@@ -3,16 +3,13 @@ package Repository;
 import Models.*;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class AttendenceRepository {
+public class AttendenceRepository implements GenericDAO<Attendance>{
     /* List all students with their attendence courses with session details by sessionID*/
     DataBaseConnect dataBaseConnect = new DataBaseConnect();
 
@@ -66,5 +63,119 @@ public class AttendenceRepository {
         }
 
         return attendanceList;
+    }
+
+    @Override
+    public void create(Attendance newAttendance) {
+        String query = "INSERT INTO attendance (attendenceId, attendingStatus, justifiedStatus, proof, sessionId, studentId) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+
+            statement.setInt(1, newAttendance.getAttendenceId());
+            statement.setString(2, newAttendance.getAttendingStatus().name());
+            statement.setString(3, newAttendance.getJustifiedStatus().name());
+            statement.setString(4, newAttendance.getProof());
+            statement.setInt(5, newAttendance.getSession().getSessionId());
+            statement.setInt(6, newAttendance.getStudent().getStudentId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating newAttendance", e);
+        }
+    }
+
+    @Override
+    public List<Attendance> showAll() {
+        List<Attendance> attendanceList = new ArrayList<>();
+        String query = "SELECT * FROM attendance";
+
+        try (Connection conn = dataBaseConnect.getConnection();
+             Statement stm = conn.createStatement();
+             ResultSet result = stm.executeQuery(query)) {
+
+            while (result.next()) {
+                int sessionId = result.getInt("sessionId");
+                int studentId = result.getInt("studentId");
+                Session session = new Session();
+                Student student = new Student();
+                session.setSessionId(sessionId);
+                student.setStudentId(studentId);
+                Attendance attendanceAdd = new Attendance(
+                        result.getInt("attendenceId"),
+                        AttendingStatus.valueOf(result.getString("attendingStatus")),
+                        JustifiedStatus.valueOf(result.getString("justifiedStatus")),
+                        result.getString("proof"),
+                        session,
+                        student
+                );
+                attendanceList.add(attendanceAdd);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading attendance", e);
+        }
+        return attendanceList;
+    }
+
+    @Override
+    public Attendance update(int attendenceId, Attendance attendanceUpdate) {
+        String query = "UPDATE attendance SET attendingStatus=?, justifiedStatus=?, proof=?, sessionId=?, studentId=? WHERE attendenceId=?";
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setString(1, attendanceUpdate.getAttendingStatus().name());
+            statement.setString(2, attendanceUpdate.getJustifiedStatus().name());
+            statement.setString(3, attendanceUpdate.getProof());
+            statement.setInt(4, attendanceUpdate.getSession().getSessionId());
+            statement.setInt(5, attendanceUpdate.getStudent().getStudentId());
+            statement.setInt(6, attendanceUpdate.getAttendenceId());
+
+            statement.executeUpdate();
+            return attendanceUpdate;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating attendance", e);
+        }
+    }
+
+    @Override
+    public void delete(int attendenceId) {
+        String query = "DELETE FROM attendance WHERE attendenceId=?";
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, attendenceId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting attendance", e);
+        }
+    }
+
+    @Override
+    public Attendance read(int attendenceId) {
+        Attendance attendanceRead = null;
+        String query = "SELECT * FROM attendance WHERE attendenceId=?";
+
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+
+            statement.setInt(1, attendenceId);
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                int sessionId = result.getInt("sessionId");
+                int studentId = result.getInt("studentId");
+                Session session = new Session();
+                Student student = new Student();
+                session.setSessionId(sessionId);
+                student.setStudentId(studentId);
+                attendanceRead = new Attendance(
+                        result.getInt("attendenceId"),
+                        AttendingStatus.valueOf(result.getString("attendingStatus")),
+                        JustifiedStatus.valueOf(result.getString("justifiedStatus")),
+                        result.getString("proof"),
+                        session,
+                        student
+                );
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading attendance", e);
+        }
+        return attendanceRead;
     }
 }
