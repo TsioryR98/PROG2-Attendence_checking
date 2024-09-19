@@ -258,7 +258,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Course'
 
-  /courses/{id}:
+  /courses/{courseId}:
     get:
       tags:
         - Courses

@@ -19,4 +19,19 @@ public class CourseService {
     public List<Course> getCourseWithTeacherById(int teacherId){
         return courseRepository.courseWithTeacherById(teacherId);
     }
+    public void createNewCourse(Course newCourse){
+        courseRepository.create(newCourse);
+    }
+    public List<Course> showAllCourse(){
+        return courseRepository.showAll();
+    }
+    public Course updateCourse(int courseId, Course courseUpdate){
+        return courseRepository.update(courseId,courseUpdate);
+    }
+    public void deleteCourse(int courseId){
+         courseRepository.delete(courseId);
+    }
+    public Course readCourse(int courseId){
+        return courseRepository.read(courseId);
+    }
 }
