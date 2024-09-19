@@ -10,9 +10,9 @@ public class Enrollment {
     private Student student;
     private Course course;
 
-    public Enrollment(Course course, Student student, int idEnrollment) {
-        this.course = course;
+    public Enrollment(int idEnrollment, Student student,Course course) {
         this.student = student;
         this.idEnrollment = idEnrollment;
+        this.course = course;
     }
 }

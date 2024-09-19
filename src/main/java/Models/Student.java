@@ -1,12 +1,15 @@
 package Models;
 import java.util.Set;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 @Getter
 @Setter
+@NoArgsConstructor
 public class Student {
     public int studentId;
     private String lastName;

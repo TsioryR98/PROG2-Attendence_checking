@@ -193,31 +193,48 @@ VALUES
 (30, 10, 6);
 
 
+-------------------ALL QUERIES----------------
 
----1 .Requête pour obtenir tous les étudiants inscrits à un cours spécifique
+--OK--1 .Requête pour obtenir tous les étudiants inscrits à un cours spécifique ou tous
 
-    SELECT s.studentId, s.lastName, s.firstName, s.studentEmail
+    SELECT e.idEnrollment,s.studentId, s.lastName, s.firstName, s.studentEmail,c.courseName
     FROM Enrollment e
-             JOIN student s ON e.studentId=s.studentId
-    WHERE courseId=1;
+    JOIN student s ON e.studentId=s.studentId
+    JOIN Course c ON e.courseId=c.courseId;
 
----2.   . Requête pour obtenir les cours enseignés par un professeur spécifique
+    SELECT e.idEnrollment,s.studentId, s.lastName, s.firstName, s.studentEmail,c.courseName
+    FROM Enrollment e
+    JOIN student s ON e.studentId=s.studentId
+    JOIN Course c ON e.courseId=c.courseId
+    WHERE e.courseId=1;
 
-    SELECT c.courseId, c.courseName, t.firstName,t.lastName
+--OK--2. Requête pour obtenir les cours enseignés par un professeur spécifique
+
+    SELECT c.courseId, c.courseName, t.firstName,t.lastName,t.email
+    FROM Course c
+    JOIN Teacher t ON c.teacherId = t.teacherId;
+
+    SELECT c.courseId, c.courseName, t.firstName,t.lastName,t.email
     FROM Course c
     JOIN Teacher t ON c.teacherId = t.teacherId
-    --WHERE t.teacherId =2;
+    WHERE t.teacherId =2;
 
 ---3. Requête pour obtenir l'assiduité des étudiants pour une session spécifique
 
-    SELECT s.firstName,
+    SELECT ses.sessionDate,
+           c.courseName,
+           s.studentId,
+           s.firstName,
            s.lastName,
            a.attendingStatus,
-           a.justifiedStatus,
-           a.proof
+           a.justifiedStatus
     FROM Attendance a
-             JOIN Student s ON a.studentId = s.studentId
-    WHERE a.sessionId =1;
+    JOIN Student s ON a.studentId = s.studentId
+    JOIN Session ses ON a.sessionId = ses.sessionId
+    JOIN Course c ON ses.courseId = c.courseId
+    WHERE a.sessionId = 1
+    ORDER BY s.studentId ASC;
+
 
 ---4. Requête pour obtenir toutes les sessions d'un cours spécifique
     SELECT c.courseId,

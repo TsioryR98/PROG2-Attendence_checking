@@ -1,22 +1,24 @@
 package Models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Teacher {
     private int teacherId;
     private String lastName;
     private String firstName;
-    private String contact;
-    private String teacherAdress;
+    private String email;
+    private String phoneNumber;
 
-    public Teacher(int teacherId, String lastName, String firstName, String contact, String teacherAdress) {
+    public Teacher(int teacherId, String lastName, String firstName, String email, String phoneNumber) {
         this.teacherId = teacherId;
         this.lastName = lastName;
         this.firstName = firstName;
-        this.contact = contact;
-        this.teacherAdress = teacherAdress;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 }

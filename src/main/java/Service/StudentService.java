@@ -19,7 +19,6 @@ public class StudentService {
     public List<Student> showAllStudent(){
         return studentRepository.showAll();
     }
-
     public Student updateStudent(int id, Student studentUpdate){
         return studentRepository.update(id, studentUpdate);
     }

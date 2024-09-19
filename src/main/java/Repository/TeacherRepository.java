@@ -20,8 +20,8 @@ public class TeacherRepository implements GenericDAO<Teacher> {
             statement.setInt(1, newTeacher.getTeacherId());
             statement.setString(2, newTeacher.getLastName());
             statement.setString(3, newTeacher.getFirstName());
-            statement.setString(4, newTeacher.getContact());
-            statement.setString(5, newTeacher.getTeacherAdress());
+            statement.setString(4, newTeacher.getEmail());
+            statement.setString(5, newTeacher.getPhoneNumber());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -61,8 +61,8 @@ public class TeacherRepository implements GenericDAO<Teacher> {
 
             statement.setString(1, updatedTeacher.getLastName());
             statement.setString(2, updatedTeacher.getFirstName());
-            statement.setString(3, updatedTeacher.getContact());
-            statement.setString(4, updatedTeacher.getTeacherAdress());
+            statement.setString(3, updatedTeacher.getEmail());
+            statement.setString(4, updatedTeacher.getPhoneNumber());
             statement.setInt(5, id);
 
             statement.executeUpdate();
