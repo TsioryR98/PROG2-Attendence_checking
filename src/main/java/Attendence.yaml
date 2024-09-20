@@ -697,6 +697,7 @@ paths:
       tags:
         - Convocations
       summary: Retrieve all convocations
+      operationId: showAllConvocations
       responses:
         '200':
           description: A list of convocations
@@ -711,6 +712,7 @@ paths:
       tags:
         - Convocations
       summary: Create a new convocation
+      operationId: createConvocation
       requestBody:
         required: true
         content:
@@ -730,6 +732,7 @@ paths:
       tags:
         - Convocations
       summary: Retrieve a single convocation by ID
+      operationId: readConvocationById
       parameters:
         - name: convocationId
           in: path
@@ -750,6 +753,7 @@ paths:
       tags:
         - Convocations
       summary: Update a convocation by ID
+      operationId: updateConvocationById
       parameters:
         - name: convocationId
           in: path
@@ -773,6 +777,7 @@ paths:
       tags:
         - Convocations
       summary: Delete a convocation by ID
+      operationId: deleteConvocationById
       parameters:
         - name: convocationId
           in: path
