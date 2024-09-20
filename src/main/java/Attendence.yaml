@@ -803,7 +803,6 @@ components:
               type: integer
             name:
               type: string
-
     Session:
       type: object
       properties:

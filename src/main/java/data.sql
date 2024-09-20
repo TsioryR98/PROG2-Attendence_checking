@@ -60,7 +60,31 @@ FOREIGN KEY (sessionId) REFERENCES Session(sessionId) ON DELETE CASCADE,
 FOREIGN KEY (studentId) REFERENCES Student(studentId) ON DELETE CASCADE
 );
 
+    CREATE TABLE convocation (
+                                 convocationId INT PRIMARY KEY,
+                                 teacherId INT NOT NULL,
+                                 studentId INT NOT NULL,
+                                 convocationDate TIMESTAMP NOT NULL,
+                                 reason TEXT,
+                                 FOREIGN KEY (teacherId) REFERENCES teacher(teacherId) ON DELETE CASCADE,
+                                 FOREIGN KEY (studentId) REFERENCES student(studentId) ON DELETE CASCADE
+    );
+
 ---------------ALL INSERTS---------------------------
+INSERT INTO convocation (convocationId, teacherId, studentId, convocationDate, reason)
+VALUES (1, 5, 14, '2024-09-21', 'Frequent absence from class');
+
+INSERT INTO convocation (convocationId, teacherId, studentId, convocationDate, reason)
+VALUES (2, 3, 8, '2024-09-22', 'Misbehavior in class');
+
+INSERT INTO convocation (convocationId, teacherId, studentId, convocationDate, reason)
+VALUES (3, 7, 3, '2024-09-23', 'Violation of school rules');
+
+INSERT INTO convocation (convocationId, teacherId, studentId, convocationDate, reason)
+VALUES (4, 1, 19, '2024-09-24', 'Consistent tardiness to classes');
+
+INSERT INTO convocation (convocationId, teacherId, studentId, convocationDate, reason)
+VALUES (5, 6, 5, '2024-09-25', 'Failure to submit assignments on time');
 
 INSERT INTO Student (studentId, lastName, firstName, dateOfBirth, studentEmail, phoneNumber, enrollmentDate, academicYear) VALUES
 (1, 'Dupont', 'Alice', '2000-05-15', 'alice.dupont@example.com', '0123456789', '2023-09-01', 'L1'),

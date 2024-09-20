@@ -22,7 +22,7 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
             statement.setInt(1, newConvocation.getConvocationId());
             statement.setInt(2, newConvocation.getTeacher().getTeacherId());
             statement.setInt(3, newConvocation.getStudent().getStudentId());
-            statement.setObject(4,Timestamp.valueOf(newConvocation.getConvocationDate()));
+            statement.setObject(4,(newConvocation.getConvocationDate()));
             statement.setString(5, newConvocation.getReason());
 
             statement.executeUpdate();
@@ -68,7 +68,7 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, convocationUpdate.getTeacher().getTeacherId());
             statement.setInt(2, convocationUpdate.getStudent().getStudentId());
-            statement.setObject(3, Timestamp.valueOf(convocationUpdate.getConvocationDate()));
+            statement.setObject(3,(convocationUpdate.getConvocationDate()));
             statement.setString(4, convocationUpdate.getReason());
             statement.setInt(5, convocationId);
 
