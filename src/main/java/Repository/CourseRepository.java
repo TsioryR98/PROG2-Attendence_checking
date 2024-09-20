@@ -2,6 +2,8 @@ package Repository;
 
 import Models.Course;
 import Models.Teacher;
+import Models.exception.NotFoundException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -41,7 +43,7 @@ public class CourseRepository implements GenericDAO<Course>{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException("Error finding course with associated teacher",e);
         }
 
         return courseList;
@@ -76,7 +78,7 @@ public class CourseRepository implements GenericDAO<Course>{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException("Error finding course with associated teacher",e);
         }
 
         return courseList;
@@ -94,7 +96,7 @@ public class CourseRepository implements GenericDAO<Course>{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating newCourse", e);
+            throw new ServerException("Error creating newCourse", e);
         }
     }
 
@@ -119,7 +121,7 @@ public class CourseRepository implements GenericDAO<Course>{
                 courseList.add(courseAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading courses", e);
+            throw new ServerException("Error reading courses", e);
         }
         return courseList;
     }
@@ -136,7 +138,7 @@ public class CourseRepository implements GenericDAO<Course>{
             statement.executeUpdate();
             return courseUpdate;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating course", e);
+            throw new ServerException("Error updating course", e);
         }
     }
 
@@ -148,7 +150,7 @@ public class CourseRepository implements GenericDAO<Course>{
             statement.setInt(1, courseId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting course", e);
+            throw new ServerException("Error deleting course", e);
         }
     }
 
@@ -171,8 +173,11 @@ public class CourseRepository implements GenericDAO<Course>{
                         teacher
                 );
              }
+             else{
+                 throw new NotFoundException("cannot retrieve course by courseId "+courseId);
+             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading course", e);
+            throw new ServerException("Error reading course", e);
         }
         return courseRead;
     }

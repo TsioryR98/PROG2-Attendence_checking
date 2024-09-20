@@ -2,6 +2,9 @@ package Repository;
 
 import Models.AcademicYear;
 import Models.Student;
+import Models.exception.BadRequestException;
+import Models.exception.NotFoundException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -16,6 +19,9 @@ public class StudentRepository implements GenericDAO <Student> {
 
     @Override
     public void create(Student newStudent) {
+        if (newStudent == null) {
+            throw new BadRequestException(" newStudent cannot be null for this request");
+        }
         String query = "INSERT INTO student (studentId, lastName, firstName, dateOfBirth, studentEmail, phoneNumber, enrollmentDate, academicYear) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -31,7 +37,7 @@ public class StudentRepository implements GenericDAO <Student> {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating newStudent", e);
+            throw new ServerException("Error creating newStudent", e);
         }
     }
 
@@ -57,7 +63,7 @@ public class StudentRepository implements GenericDAO <Student> {
                 studentList.add(studentAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading student", e);
+            throw new ServerException("error occurred during retrieving Teacher");
         }
         return studentList;
     }
@@ -77,7 +83,7 @@ public class StudentRepository implements GenericDAO <Student> {
             statement.executeUpdate();
             return studentUpdate;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating student", e);
+            throw new ServerException("Error updating student", e);
         }
     }
 
@@ -89,7 +95,7 @@ public class StudentRepository implements GenericDAO <Student> {
             statement.setInt(1, studentId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting student", e);
+            throw new ServerException("Error deleting student",e);
         }
     }
 
@@ -115,9 +121,12 @@ public class StudentRepository implements GenericDAO <Student> {
                         AcademicYear.valueOf(result.getString("academicYear"))
                 );
             }
+            else{
+                throw new NotFoundException("Not found student with id "+ studentId);
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading Student", e);
+            throw new ServerException("Error reading Student", e);
         }
         return studentRead;
     }

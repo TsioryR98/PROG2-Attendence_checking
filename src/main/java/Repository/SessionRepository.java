@@ -2,6 +2,9 @@ package Repository;
 
 import Models.Course;
 import Models.Session;
+import Models.exception.BadRequestException;
+import Models.exception.NotFoundException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -15,6 +18,9 @@ public class SessionRepository implements GenericDAO<Session>{
 
     @Override
     public void create(Session newSession) {
+        if (newSession == null) {
+            throw new BadRequestException("new Session cannot be null");
+        }
         String query = "INSERT INTO session (sessionId, sessionDate, courseId) VALUES (?, ?, ?)";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -25,7 +31,7 @@ public class SessionRepository implements GenericDAO<Session>{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating newSession", e);
+            throw new ServerException("Error creating newSession", e);
         }
     }
 
@@ -51,7 +57,7 @@ public class SessionRepository implements GenericDAO<Session>{
                 sessionList.add(sessionAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading sessions", e);
+            throw new ServerException("Error reading sessions", e);
         }
         return sessionList;
     }
@@ -68,7 +74,7 @@ public class SessionRepository implements GenericDAO<Session>{
             statement.executeUpdate();
             return sessionUpdate;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating session", e);
+            throw new ServerException("Error updating session", e);
         }
     }
 
@@ -80,7 +86,7 @@ public class SessionRepository implements GenericDAO<Session>{
             statement.setInt(1, sessionId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting session", e);
+            throw new ServerException("Error deleting session", e);
         }
     }
 
@@ -105,9 +111,12 @@ public class SessionRepository implements GenericDAO<Session>{
                         course
                 );
             }
+            else {
+                throw new NotFoundException("Cannot find session with sessionId "+sessionId);
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading session", e);
+            throw new ServerException("Error reading session", e);
         }
         return sessionRead;
     }

@@ -1,6 +1,10 @@
 package Repository;
 
 import Models.Teacher;
+import Models.exception.BadRequestException;
+import Models.exception.NotFoundException;
+import Models.exception.NotImplementedException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -13,6 +17,9 @@ public class TeacherRepository implements GenericDAO<Teacher> {
    DataBaseConnect dataBaseConnect = new DataBaseConnect();
     @Override
     public void create(Teacher newTeacher) {
+        if (newTeacher == null) {
+            throw new BadRequestException("New teacher cannot be null for this request");
+        }
         String query = "INSERT INTO Teacher (teacherId, lastName, firstName, email, phoneNumber) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = dataBaseConnect.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -25,7 +32,7 @@ public class TeacherRepository implements GenericDAO<Teacher> {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServerException("error occurred during creating Teacher");
         }
     }
 
@@ -48,7 +55,7 @@ public class TeacherRepository implements GenericDAO<Teacher> {
                 teachers.add(teacher);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServerException("error occurred during showing all Teachers");
         }
         return teachers;
     }
@@ -67,7 +74,7 @@ public class TeacherRepository implements GenericDAO<Teacher> {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServerException("error occurred during updating Teacher");
         }
         return updatedTeacher;
     }
@@ -81,7 +88,7 @@ public class TeacherRepository implements GenericDAO<Teacher> {
             statement.setInt(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServerException("error occurred during deleting Teacher");
         }
     }
 
@@ -103,9 +110,12 @@ public class TeacherRepository implements GenericDAO<Teacher> {
                             resultSet.getString("phoneNumber")
                     );
                 }
+                else {
+                    throw new NotFoundException("Not found teacher with id "+ id);
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new ServerException("error occurred during reading Teacher");
         }
         return teacher;
     }

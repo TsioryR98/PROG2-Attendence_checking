@@ -4,6 +4,9 @@ import Models.Course;
 import Models.Enrollment;
 import Models.Session;
 import Models.Student;
+import Models.exception.BadRequestException;
+import Models.exception.NotFoundException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -47,7 +50,7 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
                 enrollmentList.add(enrollment);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading students with courses", e);
+            throw new ServerException("Error reading students with courses", e);
         }
         return enrollmentList;
     }
@@ -89,13 +92,16 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading students with courses", e);
+            throw new ServerException("Error reading students with courses", e);
         }
         return enrollmentList;
     }
 
     @Override
     public void create(Enrollment newEnrollment) {
+        if (newEnrollment == null) {
+            throw new BadRequestException("New Enrollment cannot be null");
+        }
         String query = "INSERT INTO enrollment (idEnrollment, studentId, courseId) VALUES (?, ?, ?)";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -106,7 +112,7 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating new enrollment", e);
+            throw new ServerException("Error creating new enrollment", e);
         }
     }
 
@@ -134,7 +140,7 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
                 enrollmentList.add(enrollmentAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading enrollments", e);
+            throw new ServerException("Error reading enrollments", e);
         }
         return enrollmentList;
     }
@@ -151,7 +157,7 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
             statement.executeUpdate();
             return enrollmentUpdate;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating enrollment", e);
+            throw new ServerException("Error updating enrollment", e);
         }
     }
 
@@ -163,7 +169,7 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
             statement.setInt(1, idEnrollment);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting enrollment", e);
+            throw new ServerException("Error deleting enrollment", e);
         }
     }
 
@@ -190,9 +196,12 @@ public class EnrollmentRepository implements GenericDAO<Enrollment>{
                         course
                 );
             }
+            else {
+                throw new NotFoundException("cannot retrieve enrollment with idEnrollment "+idEnrollment);
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading enrollment", e);
+            throw new ServerException("Error reading enrollment", e);
         }
         return enrollmentRead;
     }
