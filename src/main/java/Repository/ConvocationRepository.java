@@ -3,6 +3,9 @@ package Repository;
 import Models.Convocation;
 import Models.Student;
 import Models.Teacher;
+import Models.exception.BadRequestException;
+import Models.exception.NotFoundException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -15,6 +18,9 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
     DataBaseConnect dataBaseConnect = new DataBaseConnect();
     @Override
     public void create(Convocation newConvocation) {
+        if (newConvocation == null) {
+            throw new BadRequestException("newConvocation cannot be null");
+        }
         String query = "INSERT INTO convocation (convocationId, teacherId, studentId, convocationDate, reason) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -27,7 +33,7 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating new convocation", e);
+            throw new ServerException("Error creating new convocation", e);
         }
     }
     @Override
@@ -56,7 +62,7 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
                 convocationList.add(convocationAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading convocations", e);
+            throw new ServerException("Error reading convocations", e);
         }
         return convocationList;
     }
@@ -75,7 +81,7 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
             statement.executeUpdate();
             return convocationUpdate;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating convocation", e);
+            throw new ServerException("Error updating convocation", e);
         }    }
 
     @Override
@@ -86,7 +92,7 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
             statement.setInt(1, convocationId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting convocation", e);
+            throw new ServerException("Error deleting convocation", e);
         }
     }
 
@@ -115,9 +121,12 @@ public class ConvocationRepository implements GenericDAO<Convocation>{
                         result.getString("reason")
                 );
             }
+            else{
+                throw new NotFoundException("cannot retrieve convocation by convocationId "+convocationId);
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading convocation", e);
+            throw new ServerException("Error reading convocation", e);
         }
         return convocationRead;    }
 }

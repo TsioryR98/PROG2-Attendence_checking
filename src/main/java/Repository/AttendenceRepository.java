@@ -1,6 +1,9 @@
 package Repository;
 
 import Models.*;
+import Models.exception.BadRequestException;
+import Models.exception.NotFoundException;
+import Models.exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -59,7 +62,7 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading attendence by session", e);
+            throw new ServerException("Error reading attendence by session", e);
         }
 
         return attendanceList;
@@ -67,6 +70,9 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
 
     @Override
     public void create(Attendance newAttendance) {
+        if (newAttendance == null) {
+            throw new BadRequestException("newAttendance cannot be null");
+        }
         String query = "INSERT INTO attendance (attendenceId, attendingStatus, justifiedStatus, proof, sessionId, studentId) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -79,7 +85,7 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
             statement.setInt(6, newAttendance.getStudent().getStudentId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating newAttendance", e);
+            throw new ServerException("Error creating newAttendance", e);
         }
     }
 
@@ -110,7 +116,7 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
                 attendanceList.add(attendanceAdd);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading attendance", e);
+            throw new ServerException("Error reading attendance", e);
         }
         return attendanceList;
     }
@@ -130,7 +136,7 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
             statement.executeUpdate();
             return attendanceUpdate;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating attendance", e);
+            throw new ServerException("Error updating attendance", e);
         }
     }
 
@@ -142,7 +148,7 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
             statement.setInt(1, attendenceId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting attendance", e);
+            throw new ServerException("Error deleting attendance", e);
         }
     }
 
@@ -172,9 +178,12 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
                         student
                 );
             }
+            else {
+                throw new NotFoundException("cannot readinga attendence by attendenceId "+attendenceId);
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error reading attendance", e);
+            throw new ServerException("Error reading attendance", e);
         }
         return attendanceRead;
     }
