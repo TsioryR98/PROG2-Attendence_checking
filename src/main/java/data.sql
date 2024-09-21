@@ -285,7 +285,7 @@ JOIN Course c ON ses.courseId = c.courseId
 WHERE a.attendingStatus = 'MISSING' AND s.studentId =1 AND c.courseId=5;
 
 
---11. Obtenir tous les cours avec les enseignants responsables et les étudiants inscrits
+--KO 11. tous les cours avec les enseignants responsables et les étudiants inscrits
 
     SELECT
         c.courseName,
@@ -308,19 +308,19 @@ WHERE a.attendingStatus = 'MISSING' AND s.studentId =1 AND c.courseId=5;
         Attendance a ON s.studentId = a.attendenceId
         ORDER BY c.courseName;
 
---13.Liste complète des absences, avec le statut de justification
+--13.Liste des absences, avec le statut de justification et les pieces justificatives
     SELECT s.studentId,
            s.lastName,
            s.firstName,
-           a.attendingStatus,
+           s.academicYear,
            a.justifiedStatus,
            a.proof,
            a.sessionId,
            se.sessionDate
     FROM Attendance a
-             INNER JOIN Student s ON a.studentId = s.studentId
-             INNER JOIN Session se ON a.sessionId = se.sessionId
-    WHERE a.attendingStatus = 'MISSING';
+    INNER JOIN Student s ON a.studentId = s.studentId
+    INNER JOIN Session se ON a.sessionId = se.sessionId
+    WHERE a.attendingStatus = 'MISSING' ORDER BY se.sessionDate;
 
 --14.Nombre d'absences justifiées et non justifiées pour chaque étudiant
 

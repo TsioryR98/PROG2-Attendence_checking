@@ -146,7 +146,7 @@ paths:
     get:
       tags:
         - Student
-      summary: Get absences for one given student
+      summary: Get absences for one given student in specific course
       operationId: getAttendanceByStudentCourse
       parameters:
         - name: studentId

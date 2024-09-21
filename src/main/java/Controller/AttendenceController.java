@@ -1,7 +1,6 @@
 package Controller;
 
 import Models.Attendance;
-import Models.Session;
 import Service.AttendanceService;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,12 +38,11 @@ public class AttendenceController {
         return attendanceService.readAttendence(attendanceId);
     }
     @GetMapping("/student/{studentId}/attendances")
-    public List<Attendance> getAttendanceByStudentId(@PathVariable int studentId) {
+    public List<Attendance> getAbsenceByStudentId(@PathVariable int studentId) {
         return attendanceService.getAttendanceByStudentId(studentId);
     }
     @GetMapping("/student/{studentId}/courses/{courseId}/attendances")
-    public List<Attendance> getAttendanceByStudentCourse(@PathVariable int studentId, @PathVariable int courseId) {
+    public List<Attendance> getAbsenceByStudentCourse(@PathVariable int studentId, @PathVariable int courseId) {
         return attendanceService.getAttendanceByStudentCourse(studentId, courseId);
     }
-
 }

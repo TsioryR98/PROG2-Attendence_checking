@@ -191,7 +191,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
         List<Attendance> attendanceByStudent = new ArrayList<>();
 
         String query = "SELECT s.firstName,\n" +
-                "s.lastName,\n" +
+                "s.lastName,s.academicYear,\n" +
                 "ses.sessionDate,\n" +
                 "c.courseName,\n" +
                 "a.attendingStatus,\n" +
@@ -211,10 +211,12 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                     String firstName = result.getString("firstName");
                     String lastName = result.getString("lastName");
                     String courseName = result.getString("courseName");
+                    String studentLevel = String.valueOf(AcademicYear.valueOf(result.getString("academicyear")));
 
                     Student student = new Student();
                     student.setFirstName(firstName);
                     student.setLastName(lastName);
+                    student.setAcademicYear(AcademicYear.valueOf(studentLevel));
 
                     Course course = new Course();
                     course.setCourseName(courseName);
@@ -290,6 +292,54 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
             throw new ServerException("Error to retrieve attendence by session and student ID", e);
         }
         return attendanceList;
+    }
+    public List<Attendance> absenceProof(){
+        List<Attendance> absenceProofList = new ArrayList<>();
+        String query ="SELECT s.studentId,\n" +
+                "s.lastName,\n" +
+                "s.firstName,\n" +
+                "s.academicYear,\n" +
+                "a.justifiedStatus,\n" +
+                "a.proof,\n" +
+                "se.sessionDate\n" +
+                "FROM Attendance a\n" +
+                "INNER JOIN Student s ON a.studentId = s.studentId\n" +
+                "INNER JOIN Session se ON a.sessionId = se.sessionId\n" +
+                "WHERE a.attendingStatus = 'MISSING' ORDER BY se.sessionDate;";
 
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()){
+                    LocalDateTime sessionDate = result.getObject("sessionDate", LocalDateTime.class);
+                    int studentId = result.getInt("studentId");
+                    String studentFirstName = result.getString("firstName");
+                    String studentLastName = result.getString("lastName");
+                    String studentLevel = String.valueOf(AcademicYear.valueOf(result.getString("academicyear")));
+                    //Student object
+                    Student student = new Student();
+                    student.setStudentId(studentId);
+                    student.setAcademicYear(AcademicYear.valueOf(studentLevel));
+                    student.setFirstName(studentFirstName);
+                    student.setLastName(studentLastName);
+                    //session object
+                    Session session = new Session();
+                    session.setSessionDate(sessionDate);
+
+                    Attendance attendence = new Attendance();
+                    attendence.setStudent(student);
+                    attendence.setSession(session);
+                    attendence.setAttendenceId(result.getInt("attendenceId"));
+                    attendence.setAttendingStatus(AttendingStatus.valueOf(result.getString("attendingStatus")));
+                    attendence.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
+
+                    absenceProofList.add(attendence);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException("Error to retrieve absenceProof for missing student", e);
+        }
+
+        return absenceProofList;
     }
 }
