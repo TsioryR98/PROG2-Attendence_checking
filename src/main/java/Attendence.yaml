@@ -119,7 +119,7 @@ paths:
                 $ref: '#/components/schemas/Student'
         '400':
           description: Invalid input
-  /student/{studentId}/attendances:
+  /student/{studentId}/absence:
     get:
       tags:
         - Student
@@ -142,7 +142,7 @@ paths:
                   $ref: '#/components/schemas/Attendance'
         '404':
           description: No attendance records found for the given student ID
-  /student/{studentId}/courses/{courseId}/attendances:
+  /student/{studentId}/courses/{courseId}/absence:
     get:
       tags:
         - Student

@@ -37,12 +37,16 @@ public class AttendenceController {
     public Attendance readAttendenceById(@PathVariable int attendanceId){
         return attendanceService.readAttendence(attendanceId);
     }
-    @GetMapping("/student/{studentId}/attendances")
+    @GetMapping("/student/{studentId}/absence")
     public List<Attendance> getAbsenceByStudentId(@PathVariable int studentId) {
         return attendanceService.getAttendanceByStudentId(studentId);
     }
-    @GetMapping("/student/{studentId}/courses/{courseId}/attendances")
+    @GetMapping("/student/{studentId}/courses/{courseId}/absence")
     public List<Attendance> getAbsenceByStudentCourse(@PathVariable int studentId, @PathVariable int courseId) {
         return attendanceService.getAttendanceByStudentCourse(studentId, courseId);
+    }
+    @GetMapping("/attendances/absence/proof")
+    public List<Attendance> getAbsenceWithProof(){
+        return attendanceService.getAbsenceProof();
     }
 }

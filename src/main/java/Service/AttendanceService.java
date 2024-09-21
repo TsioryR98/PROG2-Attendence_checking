@@ -37,4 +37,7 @@ public class AttendanceService {
     public List<Attendance> getAttendanceByStudentCourse(int studentId, int courseId) {
         return attendenceRepository.attendanceByStudentCourse(studentId,courseId);
     }
+    public List<Attendance> getAbsenceProof(){
+        return attendenceRepository.absenceProof();
+    }
 }

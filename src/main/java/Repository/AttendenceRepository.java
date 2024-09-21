@@ -295,7 +295,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
     }
     public List<Attendance> absenceProof(){
         List<Attendance> absenceProofList = new ArrayList<>();
-        String query ="SELECT s.studentId,\n" +
+        String query ="SELECT a.attendenceId,s.studentId,\n" +
                 "s.lastName,\n" +
                 "s.firstName,\n" +
                 "s.academicYear,\n" +
@@ -305,7 +305,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                 "FROM Attendance a\n" +
                 "INNER JOIN Student s ON a.studentId = s.studentId\n" +
                 "INNER JOIN Session se ON a.sessionId = se.sessionId\n" +
-                "WHERE a.attendingStatus = 'MISSING' ORDER BY se.sessionDate;";
+                "WHERE a.attendingStatus = 'MISSING' ORDER BY a.attendenceId ASC";
 
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -330,7 +330,6 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                     attendence.setStudent(student);
                     attendence.setSession(session);
                     attendence.setAttendenceId(result.getInt("attendenceId"));
-                    attendence.setAttendingStatus(AttendingStatus.valueOf(result.getString("attendingStatus")));
                     attendence.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
 
                     absenceProofList.add(attendence);
@@ -339,7 +338,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
         } catch (SQLException e) {
             throw new ServerException("Error to retrieve absenceProof for missing student", e);
         }
-
         return absenceProofList;
     }
+
 }
