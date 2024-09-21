@@ -219,6 +219,8 @@ VALUES
 
 -------------------ALL QUERIES----------------
 
+    SELECT studentId, lastName, firstName, dateOfBirth, studentEmail, phoneNumber, enrollmentDate,academicYear FROM Student GROUP BY academicYear, studentId, lastName, firstName, dateOfBirth, studentEmail, phoneNumber, enrollmentDate;
+
 --OK--1 .Requête pour obtenir tous les étudiants inscrits à un cours spécifique ou tous
 
     SELECT e.idEnrollment,s.studentId, s.lastName, s.firstName, s.studentEmail,c.courseName
@@ -243,80 +245,44 @@ VALUES
     JOIN Teacher t ON c.teacherId = t.teacherId
     WHERE t.teacherId =2;
 
----3. Requête pour obtenir l'assiduité des étudiants pour une session spécifique
+---OK 3. Requête pour obtenir l'assiduité des étudiants pour une session spécifique
 
-SELECT a.attendenceId,ses.sessionDate,s.studentId,
-s.firstName,s.lastName,s.academicYear,a.attendingStatus,
+SELECT a.attendenceId,c.courseName,s.studentId,
+s.firstName,s.lastName,s.academicYear,ses.sessionDate,a.attendingStatus,
 a.justifiedStatus
 FROM Attendance a
 JOIN Student s ON a.studentId = s.studentId
 JOIN Session ses ON a.sessionId = ses.sessionId
-WHERE a.sessionId = 1
-GROUP BY s.academicYear, a.attendenceId, ses.sessionDate, s.studentId,
+JOIN Course c ON ses.courseId = c.courseId
+WHERE a.sessionId = 5
+GROUP BY s.academicYear, a.attendenceId, c.courseName, ses.sessionDate, s.studentId,
 s.firstName, s.lastName, a.attendingStatus, a.justifiedStatus
-ORDER BY s.studentId ASC;
+ORDER BY s.academicYear;
 
 
----4. Requête pour obtenir toutes les sessions d'un cours spécifique
-    SELECT c.courseId,
-           c.courseName,
-           ses.sessionId,
-           ses.sessionDate
-    FROM Session ses
-             JOIN Course c ON ses.courseId = c.courseId
-    WHERE c.courseId = 1;
+---OK 4. Requête pour obtenir toutes les sessions d'un cours spécifique session/{sessionId}/course
+SELECT c.courseId,
+   c.courseName,
+   ses.sessionId,
+   ses.sessionDate
+FROM Session ses
+ JOIN Course c ON ses.courseId = c.courseId
+WHERE c.courseId = 1;
 
---5. Requête pour obtenir les étudiants justifiés pour une session donnée
-    SELECT s.firstName,
-           s.lastName,
-           a.attendingStatus,
-           a.justifiedStatus
-    FROM Attendance a
-             JOIN Student s ON a.studentId = s.studentId
-    WHERE a.sessionId = 1; --AND a.justifiedStatus = 'JUSTIFIED';
 
---7. Requête pour obtenir la liste des étudiants et leurs cours avec leur état de présence
+--OK 10. Requête pour obtenir toutes les absences pour un etudiant specifique et course specifique
 
-    SELECT s.firstName, s.lastName, c.courseName, ses.sessionDate, a.attendingStatus, a.justifiedStatus
-    FROM Attendance a
-             JOIN Student s ON a.studentId = s.studentId
-             JOIN Session ses ON a.sessionId = ses.sessionId
-             JOIN Course c ON ses.courseId = c.courseId;
-
---8. Requête pour obtenir le nombre total d'étudiants inscrits dans chaque cours avec les enseignants
-    SELECT
-        c.courseName,
-        COUNT(e.studentId) AS total_student,
-        t.firstName,
-        t.lastName
-    FROM
-        Enrollment e
-            JOIN
-        Course c ON e.courseId = c.courseId
-            JOIN
-        Teacher t ON c.teacherId = t.teacherId
-    GROUP BY
-        c.courseId, t.firstName, t.lastName;
-
---10. Requête pour obtenir toutes les absences non justifiées ou justifié pour les étudiant avec les preuves
-
-    SELECT s.firstName,
-           s.lastName,
-           ses.sessionDate,
-           c.courseName,
-           a.attendingStatus,
-           a.proof
-    --a.justifiedStatus
-    FROM
-        Attendance a
-            JOIN
-        Student s ON a.studentId = s.studentId
-            JOIN Session
-            ses ON a.sessionId = ses.sessionId
-            JOIN
-        Course c ON ses.courseId = c.courseId
-    WHERE a.attendingStatus = 'MISSING';
-    --AND a.justifiedStatus = 'NOT_JUSTIFIED'/JUSTIFIED; --s.studentId = <ID_STUDENT> si specifique
+SELECT s.firstName,
+   s.lastName,
+   ses.sessionDate,
+   c.courseName,
+   a.attendingStatus,
+   a.justifiedStatus
+FROM Attendance a
+JOIN Student s ON a.studentId = s.studentId
+JOIN Session ses ON a.sessionId = ses.sessionId
+JOIN Course c ON ses.courseId = c.courseId
+WHERE a.attendingStatus = 'MISSING' AND s.studentId =1 AND c.courseId=5;
 
 
 --11. Obtenir tous les cours avec les enseignants responsables et les étudiants inscrits
@@ -339,25 +305,8 @@ ORDER BY s.studentId ASC;
             INNER JOIN
         Student s ON e.studentId = s.studentId
             INNER JOIN
-        Attendance a ON s.studentId = a.attendenceId;
-
-
---12.Requête  pour obtenir les preuves de toutes les absences avec le cours manqué
-
-    SELECT
-        c.courseName,
-        s.studentId,
-        s.lastName,
-        s.firstName,
-        a.proof,
-        a.justifiedStatus,
-        se.sessionDate
-    FROM Attendance a
-             INNER JOIN Student s ON a.studentId = s.studentId
-             INNER JOIN Session se ON a.sessionId = se.sessionId
-             INNER JOIN Course c ON se.courseId = c.courseId
-    WHERE a.attendingStatus = 'MISSING';
-
+        Attendance a ON s.studentId = a.attendenceId
+        ORDER BY c.courseName;
 
 --13.Liste complète des absences, avec le statut de justification
     SELECT s.studentId,
@@ -379,8 +328,8 @@ ORDER BY s.studentId ASC;
         s.studentId,
         s.lastName,
         s.firstName,
-        COUNT(CASE WHEN a.justifiedStatus = 'JUSTIFIED' THEN 1 END) AS justifiedAbsences,
-        COUNT(CASE WHEN a.justifiedStatus = 'NOT_JUSTIFIED' THEN 1 END) AS notJustifiedAbsences
+        COUNT(CASE WHEN a.justifiedStatus = 'JUSTIFIED' THEN 1 END) AS justified,
+        COUNT(CASE WHEN a.justifiedStatus = 'NOT_JUSTIFIED' THEN 1 END) AS not_Justified
     FROM Attendance a
              INNER JOIN Student s ON a.studentId = s.studentId
     WHERE a.attendingStatus = 'MISSING'

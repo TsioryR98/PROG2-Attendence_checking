@@ -1,5 +1,6 @@
 package Controller;
 
+import Models.Course;
 import Models.Session;
 import Service.SessionService;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +32,9 @@ public class SessionController {
     @GetMapping("/sessions/{sessionId}")
     public Session readSessionById(@PathVariable int sessionId){
         return sessionService.readSessionById(sessionId);
+    }
+    @GetMapping("sessions/course/{courseId}")
+    public List<Session> getSessionByCourseId( @PathVariable int courseId){
+        return sessionService.getSessionByCourseId(courseId);
     }
 }

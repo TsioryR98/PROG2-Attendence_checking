@@ -3,9 +3,9 @@ package Repository;
 import Models.Convocation;
 import Models.Student;
 import Models.Teacher;
-import Models.exception.BadRequestException;
-import Models.exception.NotFoundException;
-import Models.exception.ServerException;
+import Exception.BadRequestException;
+import Exception.NotFoundException;
+import Exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;

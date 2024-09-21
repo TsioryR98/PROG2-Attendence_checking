@@ -1,5 +1,6 @@
 package Service;
 
+import Models.Course;
 import Models.Session;
 import Repository.SessionRepository;
 import org.springframework.stereotype.Service;
@@ -28,4 +29,8 @@ public class SessionService {
     public Session readSessionById(int sessionId) {
         return sessionRepository.read(sessionId);
     }
+    public List<Session> getSessionByCourseId(int courseId){
+        return sessionRepository.sessionByCourseId(courseId);
+    }
+
 }

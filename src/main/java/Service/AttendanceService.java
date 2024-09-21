@@ -31,4 +31,10 @@ public class AttendanceService {
     public Attendance readAttendence(int attendanceId){
         return attendenceRepository.read(attendanceId);
     }
+    public List<Attendance> getAttendanceByStudentId(int studentId){
+        return attendenceRepository.getAttendanceByStudent(studentId);
+    }
+    public List<Attendance> getAttendanceByStudentCourse(int studentId, int courseId) {
+        return attendenceRepository.attendanceByStudentCourse(studentId,courseId);
+    }
 }

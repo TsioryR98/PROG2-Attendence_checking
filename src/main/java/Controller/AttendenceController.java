@@ -38,5 +38,13 @@ public class AttendenceController {
     public Attendance readAttendenceById(@PathVariable int attendanceId){
         return attendanceService.readAttendence(attendanceId);
     }
+    @GetMapping("/student/{studentId}/attendances")
+    public List<Attendance> getAttendanceByStudentId(@PathVariable int studentId) {
+        return attendanceService.getAttendanceByStudentId(studentId);
+    }
+    @GetMapping("/student/{studentId}/courses/{courseId}/attendances")
+    public List<Attendance> getAttendanceByStudentCourse(@PathVariable int studentId, @PathVariable int courseId) {
+        return attendanceService.getAttendanceByStudentCourse(studentId, courseId);
+    }
 
 }

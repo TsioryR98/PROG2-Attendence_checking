@@ -1,4 +1,4 @@
-package Models.exception;
+package Exception;
 
 public class NotImplementedException extends ExceptionAPI{
     public NotImplementedException( String message) {

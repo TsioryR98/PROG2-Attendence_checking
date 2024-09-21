@@ -1,9 +1,9 @@
 package Repository;
 
 import Models.*;
-import Models.exception.BadRequestException;
-import Models.exception.NotFoundException;
-import Models.exception.ServerException;
+import Exception.BadRequestException;
+import Exception.NotFoundException;
+import Exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class AttendenceRepository implements GenericDAO<Attendance>{
+public class AttendenceRepository implements GenericDAO<Attendance> {
     /* List all students with their attendence courses with session details by sessionID*/
     DataBaseConnect dataBaseConnect = new DataBaseConnect();
 
     /*ADD GROUP BY ACADEMIC YEAR to separate*/
     public List<Attendance> attendancesBySesId(int sessionId) {
-        String query ="SELECT a.attendenceId,ses.sessionDate,s.studentId,\n" +
+        String query = "SELECT a.attendenceId,ses.sessionDate,s.studentId,\n" +
                 "s.firstName,s.lastName,s.academicYear,a.attendingStatus,\n" +
                 "a.justifiedStatus\n" +
                 "FROM Attendance a\n" +
@@ -27,16 +27,16 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
                 "WHERE a.sessionId =? \n" +
                 "GROUP BY s.academicYear, a.attendenceId, ses.sessionDate, s.studentId,\n" +
                 "s.firstName, s.lastName, a.attendingStatus, a.justifiedStatus\n" +
-                "ORDER BY s.studentId ASC;";
+                "ORDER BY s.academicYear;";
 
         List<Attendance> attendanceList = new ArrayList<>();
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-                statement.setInt(1, sessionId);
+            statement.setInt(1, sessionId);
 
             try (ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
-                    LocalDateTime sessionDate = result.getObject("sessionDate",LocalDateTime.class);
+                    LocalDateTime sessionDate = result.getObject("sessionDate", LocalDateTime.class);
                     int studentId = result.getInt("studentId");
                     String studentFirstName = result.getString("firstName");
                     String studentLastName = result.getString("lastName");
@@ -177,9 +177,8 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
                         session,
                         student
                 );
-            }
-            else {
-                throw new NotFoundException("cannot readinga attendence by attendenceId "+attendenceId);
+            } else {
+                throw new NotFoundException("cannot reading attendence by attendenceId " + attendenceId);
             }
 
         } catch (SQLException e) {
@@ -187,4 +186,59 @@ public class AttendenceRepository implements GenericDAO<Attendance>{
         }
         return attendanceRead;
     }
+
+    public List<Attendance> getAttendanceByStudent(int studentId) {
+        List<Attendance> attendanceByStudent = new ArrayList<>();
+
+        String query = "SELECT s.firstName,\n" +
+                "s.lastName,\n" +
+                "ses.sessionDate,\n" +
+                "c.courseName,\n" +
+                "a.attendingStatus,\n" +
+                "a.justifiedStatus\n" +
+                "FROM Attendance a\n" +
+                "JOIN Student s ON a.studentId = s.studentId\n" +
+                "JOIN Session ses ON a.sessionId = ses.sessionId\n" +
+                "JOIN Course c ON ses.courseId = c.courseId\n" +
+                "WHERE a.attendingStatus = 'MISSING' AND s.studentId =?;";
+
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, studentId);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    LocalDateTime sessionDate = result.getObject("sessionDate", LocalDateTime.class);
+                    String firstName = result.getString("firstName");
+                    String lastName = result.getString("lastName");
+                    String courseName = result.getString("courseName");
+
+                    Student student = new Student();
+                    student.setFirstName(firstName);
+                    student.setLastName(lastName);
+
+                    Course course = new Course();
+                    course.setCourseName(courseName);
+
+                    Session session = new Session();
+                    session.setSessionDate(sessionDate);
+                    session.setCourse(course);
+
+                    Attendance attendence = new Attendance();
+                    attendence.setStudent(student);
+                    attendence.setSession(session);
+                    attendence.setAttendingStatus(AttendingStatus.valueOf(result.getString("attendingStatus")));
+                    attendence.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
+
+                    attendanceByStudent.add(attendence);
+                } else {
+                    throw new NotFoundException("Cannot find attendence with studentId " + studentId);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException("Error to retrieve attendence by session", e);
+        }
+        return attendanceByStudent;
+
+    }
+
 }

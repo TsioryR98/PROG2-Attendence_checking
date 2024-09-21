@@ -1,12 +1,15 @@
 package Repository;
 
+import Models.Attendance;
 import Models.Course;
+import Models.Session;
 import Models.Teacher;
-import Models.exception.NotFoundException;
-import Models.exception.ServerException;
+import Exception.NotFoundException;
+import Exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,5 +184,7 @@ public class CourseRepository implements GenericDAO<Course>{
         }
         return courseRead;
     }
+
+
 }
 

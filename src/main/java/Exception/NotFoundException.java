@@ -1,4 +1,4 @@
-package Models.exception;
+package Exception;
 
 public class NotFoundException extends ExceptionAPI{
     public NotFoundException(String message,Exception source) {

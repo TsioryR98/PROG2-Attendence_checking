@@ -2,9 +2,9 @@ package Repository;
 
 import Models.AcademicYear;
 import Models.Student;
-import Models.exception.BadRequestException;
-import Models.exception.NotFoundException;
-import Models.exception.ServerException;
+import Exception.BadRequestException;
+import Exception.NotFoundException;
+import Exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -46,7 +46,7 @@ public class StudentRepository implements GenericDAO <Student> {
         List<Student> studentList = new ArrayList<>();
 
         try (Statement stm = dataBaseConnect.getConnection().createStatement()) {
-            String query = "SELECT * FROM student";
+            String query = "SELECT * FROM student ORDER BY academicyear";
             ResultSet result = stm.executeQuery(query);
 
             while (result.next()) {
@@ -130,4 +130,5 @@ public class StudentRepository implements GenericDAO <Student> {
         }
         return studentRead;
     }
+
 }

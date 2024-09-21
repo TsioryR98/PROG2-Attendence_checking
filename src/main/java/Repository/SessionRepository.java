@@ -2,9 +2,9 @@ package Repository;
 
 import Models.Course;
 import Models.Session;
-import Models.exception.BadRequestException;
-import Models.exception.NotFoundException;
-import Models.exception.ServerException;
+import Exception.BadRequestException;
+import Exception.NotFoundException;
+import Exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -120,4 +120,37 @@ public class SessionRepository implements GenericDAO<Session>{
         }
         return sessionRead;
     }
+    public List<Session> sessionByCourseId(int courseId) {
+        String query = "SELECT c.courseId,\n" +
+                "c.courseName,\n" +
+                "ses.sessionId,\n" +
+                "ses.sessionDate\n" +
+                "FROM Session ses\n" +
+                " JOIN Course c ON ses.courseId = c.courseId\n" +
+                "WHERE c.courseId = ?;";
+        List<Session> courseListBySession = new ArrayList<>();
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, courseId);
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    String courseName = result.getString("courseName");
+                    int courseID = result.getInt("courseId");
+                    Course course = new Course();
+                    course.setCourseName(courseName);
+                    course.setCourseId(courseID);
+
+                    Session session = new Session();
+                    session.setCourse(course);
+                    session.setSessionId(result.getInt("sessionId"));
+                    session.setSessionDate(result.getObject("sessionDate",LocalDateTime.class));
+
+                    courseListBySession.add(session);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException("Error reading courses by session", e);
+        }
+        return courseListBySession;
+    };
 }

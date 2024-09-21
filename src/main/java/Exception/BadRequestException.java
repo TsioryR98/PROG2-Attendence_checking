@@ -1,4 +1,4 @@
-package Models.exception;
+package Exception;
 
 public class BadRequestException extends ExceptionAPI{
 

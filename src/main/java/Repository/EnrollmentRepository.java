@@ -2,11 +2,10 @@ package Repository;
 
 import Models.Course;
 import Models.Enrollment;
-import Models.Session;
 import Models.Student;
-import Models.exception.BadRequestException;
-import Models.exception.NotFoundException;
-import Models.exception.ServerException;
+import Exception.BadRequestException;
+import Exception.NotFoundException;
+import Exception.ServerException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;

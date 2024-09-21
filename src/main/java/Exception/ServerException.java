@@ -1,4 +1,4 @@
-package Models.exception;
+package Exception;
 
 public class ServerException extends ExceptionAPI{
     public ServerException( String message) {

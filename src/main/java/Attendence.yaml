@@ -119,6 +119,29 @@ paths:
                 $ref: '#/components/schemas/Student'
         '400':
           description: Invalid input
+  /student/{studentId}/attendances:
+    get:
+      tags:
+        - Student
+      summary: Get all absences for one given student
+      operationId: getAttendanceByStudentId
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of attendance records for the specified student
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
+        '404':
+          description: No attendance records found for the given student ID
   /teacher:
     get:
       tags:
@@ -386,7 +409,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Session'
-
+  /sessions/course/{courseId}:
+    get:
+      tags:
+        - Sessions
+      summary: Retrieve a single session by CourseId
+      operationId: getSessionByCourseId
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A session object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          description: Session not found
   /sessions/{sessionId}:
     get:
       tags:
@@ -460,7 +503,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Attendance'
-
     post:
       tags:
         - Attendances
