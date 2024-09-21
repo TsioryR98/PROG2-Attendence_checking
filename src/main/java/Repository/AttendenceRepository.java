@@ -230,8 +230,6 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                     attendence.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
 
                     attendanceByStudent.add(attendence);
-                } else {
-                    throw new NotFoundException("Cannot find attendence with studentId " + studentId);
                 }
             }
         } catch (SQLException e) {
@@ -241,4 +239,57 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
 
     }
 
+    public List<Attendance> attendanceByStudentCourse(int studentId, int courseId) {
+        List<Attendance> attendanceList = new ArrayList<>();
+
+        String query = "SELECT s.firstName,\n" +
+                "s.lastName,\n" +
+                "ses.sessionDate,\n" +
+                "c.courseName,\n" +
+                "a.attendingStatus,\n" +
+                "a.justifiedStatus\n" +
+                "FROM Attendance a\n" +
+                "JOIN Student s ON a.studentId = s.studentId\n" +
+                "JOIN Session ses ON a.sessionId = ses.sessionId\n" +
+                "JOIN Course c ON ses.courseId = c.courseId\n" +
+                "WHERE a.attendingStatus = 'MISSING' AND s.studentId =? AND c.courseId=?;";
+
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, studentId);
+            statement.setInt(2, courseId);
+
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    LocalDateTime dateSession = result.getObject("sessionDate", LocalDateTime.class);
+                    String firstName = result.getString("firstName");
+                    String lastName = result.getString("lastName");
+                    String courseName = result.getString("courseName");
+
+                    Student student = new Student();
+                    student.setFirstName(firstName);
+                    student.setLastName(lastName);
+
+                    Course course = new Course();
+                    course.setCourseName(courseName);
+
+                    Session session = new Session();
+                    session.setSessionDate(dateSession);
+                    session.setCourse(course);
+
+                    Attendance attendence = new Attendance();
+                    attendence.setStudent(student);
+                    attendence.setSession(session);
+                    attendence.setAttendingStatus(AttendingStatus.valueOf(result.getString("attendingStatus")));
+                    attendence.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
+
+                    attendanceList.add(attendence);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException("Error to retrieve attendence by session and student ID", e);
+        }
+        return attendanceList;
+
+    }
 }
