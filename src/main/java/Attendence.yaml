@@ -631,6 +631,23 @@ paths:
                   $ref: '#/components/schemas/Attendance'
         '404':
           description: No attendance records found for the given session ID
+  /attendances/absence/proof:
+    get:
+      tags:
+        - Attendances
+      summary: Retrieve absence and show proof
+      operationId: getAbsenceWithProof
+      responses:
+        '200':
+          description: A list of attendance records and Proof
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
+        '404':
+          description: No attendance records found
   /enrollments:
     get:
       tags:
