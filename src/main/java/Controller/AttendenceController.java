@@ -51,14 +51,15 @@ public class AttendenceController {
     public List<Attendance> getAbsenceWithProof(){
         return attendanceService.getAbsenceProof();
     }
-    @GetMapping("/attendances/absences")
+    @GetMapping("/student/{studentId}/absences")
     public List<Attendance> getAbsencesByInterval(
+            @PathVariable int studentId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
-        return attendanceService.getAbsencesByInterval(startDateTime, endDateTime);
+        return attendanceService.getAbsencesByInterval(studentId,startDateTime, endDateTime);
     }
 }

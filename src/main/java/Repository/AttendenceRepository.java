@@ -337,7 +337,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
         return absenceProofList;
     }
 
-    public List<Attendance> getAbsencesBetween(LocalDateTime startDateTime, LocalDateTime endDateTime){
+    public List<Attendance> getAbsencesBetween(int studentId, LocalDateTime startDateTime, LocalDateTime endDateTime){
         String query = "SELECT a.attendenceId,a.justifiedStatus,\n" +
                 "s.sessionId, s.sessionDate, c.courseId, c.courseName,\n" +
                 " st.studentId, st.lastName,st.firstName\n" +
@@ -346,14 +346,14 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                 " JOIN course c ON s.courseId = c.courseId\n" +
                 " JOIN student st ON a.studentId = st.studentId\n" +
                 " WHERE s.sessionDate BETWEEN ? AND ?\n" +
-                " AND a.attendingStatus = 'MISSING';";
+                " AND a.attendingStatus = 'MISSING' AND st.studentId = ?";
 
         List<Attendance> absencesBetweenDates = new ArrayList<>();
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-
-            statement.setTimestamp(1, Timestamp.valueOf(startDateTime));
-            statement.setTimestamp(2, Timestamp.valueOf(endDateTime));
+            statement.setInt(1,studentId);
+            statement.setTimestamp(2, Timestamp.valueOf(startDateTime));
+            statement.setTimestamp(3, Timestamp.valueOf(endDateTime));
 
             try ( ResultSet result = statement.executeQuery();
             ) {
@@ -381,7 +381,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException("Error to retrieve absence inside intervallTime for missing students", e);
         }
         return absencesBetweenDates;
     }

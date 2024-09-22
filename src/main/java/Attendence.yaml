@@ -119,11 +119,11 @@ paths:
                 $ref: '#/components/schemas/Student'
         '400':
           description: Invalid input
-  /student/{studentId}/absence:
+  /student/{studentId}/absences:
     get:
       tags:
         - Student
-      summary: Get all absences for one given student
+      summary: Get absences for one given student
       operationId: getAttendanceByStudentId
       parameters:
         - name: studentId
@@ -141,7 +141,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Attendance'
         '404':
-          description: No attendance records found for the given student ID
+          description: No attendance records found for the specified student
+        '400':
+          description: Invalid input data
   /student/{studentId}/courses/{courseId}/absence:
     get:
       tags:
@@ -159,6 +161,41 @@ paths:
           required: true
           schema:
             type: integer
+      responses:
+        '200':
+          description: A list of attendance records by studentId and courseId
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
+        '404':
+          description: No attendance records found for the given student ID and course ID
+  /student/{studentId}/absence:
+    get:
+      tags:
+        - Student
+      summary: Get all absences for one student between IntervalTime
+      operationId: getAbsencesByInterval
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: startDate
+          in: path
+          required: true
+          schema:
+            type: String
+            format: date-time
+        - name: endDate
+          in: path
+          required: true
+          schema:
+            type: String
+            format: date-time
       responses:
         '200':
           description: A list of attendance records by studentId and courseId
