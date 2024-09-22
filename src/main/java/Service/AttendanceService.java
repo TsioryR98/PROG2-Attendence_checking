@@ -4,6 +4,7 @@ import Models.Attendance;
 import Repository.AttendenceRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -39,5 +40,8 @@ public class AttendanceService {
     }
     public List<Attendance> getAbsenceProof(){
         return attendenceRepository.absenceProof();
+    }
+    public List<Attendance> getAbsencesByInterval(LocalDateTime startDate, LocalDateTime endDate) {
+        return attendenceRepository.getAbsencesBetween(startDate, endDate);
     }
 }

@@ -4,6 +4,8 @@ import Models.Attendance;
 import Service.AttendanceService;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -48,5 +50,15 @@ public class AttendenceController {
     @GetMapping("/attendances/absence/proof")
     public List<Attendance> getAbsenceWithProof(){
         return attendanceService.getAbsenceProof();
+    }
+    @GetMapping("/attendances/absences")
+    public List<Attendance> getAbsencesByInterval(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+        return attendanceService.getAbsencesByInterval(startDateTime, endDateTime);
     }
 }

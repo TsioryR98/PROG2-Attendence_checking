@@ -52,7 +52,7 @@ FOREIGN KEY (courseId) REFERENCES Course(courseId) ON DELETE CASCADE
 CREATE TABLE Attendance (
 attendenceId int PRIMARY KEY,
 attendingStatus VARCHAR(10) CHECK (attendingStatus = 'MISSING' OR attendingStatus = 'ATTENDING') NOT NULL,
-justifiedStatus VARCHAR(15) CHECK (justifiedStatus = 'JUSTIFIED' OR justifiedStatus = 'NOT_JUSTIFIED') NOT NULL,
+justifiedStatus VARCHAR(15) CHECK (justifiedStatus = 'JUSTIFIED' OR justifiedStatus = 'NOT_JUSTIFIED') NULL,
 proof TEXT,
 sessionId INT NOT NULL,
 studentId INT NOT NULL,
@@ -337,4 +337,15 @@ WHERE a.attendingStatus = 'MISSING'
 GROUP BY s.studentId, s.lastName, s.firstName;
 
 
---15. group by academic year , absence de tous les L1, L2, L3
+--15.
+SELECT a.attendenceId,a.justifiedStatus,
+s.sessionId, s.sessionDate, c.courseId, c.courseName,
+ st.studentId, st.lastName,st.firstName
+ FROM attendance a
+ JOIN session s ON a.sessionId = s.sessionId
+ JOIN course c ON s.courseId = c.courseId
+ JOIN student st ON a.studentId = st.studentId
+ WHERE s.sessionDate BETWEEN ? AND ?
+ AND a.attendingStatus = 'MISSING';
+
+--'2024-01-01 11:00:00' '2024-01-24 11:00:00'

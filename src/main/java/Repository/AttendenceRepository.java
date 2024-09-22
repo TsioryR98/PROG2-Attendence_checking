@@ -96,8 +96,8 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
 
         try (Connection conn = dataBaseConnect.getConnection();
              Statement stm = conn.createStatement();
-             ResultSet result = stm.executeQuery(query)) {
-
+             ) {
+            ResultSet result = stm.executeQuery(query);
             while (result.next()) {
                 int sessionId = result.getInt("sessionId");
                 int studentId = result.getInt("studentId");
@@ -205,7 +205,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, studentId);
-            try (ResultSet result = statement.executeQuery()) {
+            ResultSet result = statement.executeQuery();
                 if (result.next()) {
                     LocalDateTime sessionDate = result.getObject("sessionDate", LocalDateTime.class);
                     String firstName = result.getString("firstName");
@@ -233,7 +233,6 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
 
                     attendanceByStudent.add(attendence);
                 }
-            }
         } catch (SQLException e) {
             throw new ServerException("Error to retrieve attendence by session", e);
         }
@@ -260,8 +259,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
              PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, studentId);
             statement.setInt(2, courseId);
-
-            try (ResultSet result = statement.executeQuery()) {
+            ResultSet result = statement.executeQuery();
                 while (result.next()) {
                     LocalDateTime dateSession = result.getObject("sessionDate", LocalDateTime.class);
                     String firstName = result.getString("firstName");
@@ -287,7 +285,6 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
 
                     attendanceList.add(attendence);
                 }
-            }
         } catch (SQLException e) {
             throw new ServerException("Error to retrieve attendence by session and student ID", e);
         }
@@ -309,7 +306,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
 
         try (Connection conn = dataBaseConnect.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
-            try (ResultSet result = statement.executeQuery()) {
+            ResultSet result = statement.executeQuery();
                 while (result.next()){
                     LocalDateTime sessionDate = result.getObject("sessionDate", LocalDateTime.class);
                     int studentId = result.getInt("studentId");
@@ -334,11 +331,58 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
 
                     absenceProofList.add(attendence);
                 }
-            }
         } catch (SQLException e) {
             throw new ServerException("Error to retrieve absenceProof for missing student", e);
         }
         return absenceProofList;
     }
 
+    public List<Attendance> getAbsencesBetween(LocalDateTime startDateTime, LocalDateTime endDateTime){
+        String query = "SELECT a.attendenceId,a.justifiedStatus,\n" +
+                "s.sessionId, s.sessionDate, c.courseId, c.courseName,\n" +
+                " st.studentId, st.lastName,st.firstName\n" +
+                " FROM attendance a\n" +
+                " JOIN session s ON a.sessionId = s.sessionId\n" +
+                " JOIN course c ON s.courseId = c.courseId\n" +
+                " JOIN student st ON a.studentId = st.studentId\n" +
+                " WHERE s.sessionDate BETWEEN ? AND ?\n" +
+                " AND a.attendingStatus = 'MISSING';";
+
+        List<Attendance> absencesBetweenDates = new ArrayList<>();
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+
+            statement.setTimestamp(1, Timestamp.valueOf(startDateTime));
+            statement.setTimestamp(2, Timestamp.valueOf(endDateTime));
+
+            try ( ResultSet result = statement.executeQuery();
+            ) {
+                while (result.next()) {
+                    Session session = new Session();
+                    session.setSessionId(result.getInt("sessionId"));
+                    session.setSessionDate(result.getTimestamp("sessionDate").toLocalDateTime());
+
+                    Course course = new Course();
+                    course.setCourseId(result.getInt("courseId"));
+                    course.setCourseName(result.getString("courseName"));
+                    session.setCourse(course);
+
+                    Student student = new Student();
+                    student.setStudentId(result.getInt("studentId"));
+                    student.setLastName(result.getString("lastName"));
+                    student.setFirstName(result.getString("firstName"));
+
+                    Attendance attendance = new Attendance();
+                    attendance.setAttendenceId(result.getInt("attendenceId"));
+                    attendance.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
+                    attendance.setSession(session);
+                    attendance.setStudent(student);
+                    absencesBetweenDates.add(attendance);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return absencesBetweenDates;
+    }
 }
