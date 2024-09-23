@@ -13,6 +13,7 @@ This is a **Spring Boot** application designed to manage student attendance, cou
 - **GET** `/student/{studentId}/absence`: Retrieve absences for a student.
 - **GET** `/student/{studentId}/courses/{courseId}/absence`: Retrieve absences for a student in a specific course.
 - **GET** `/student/{studentId}/absences`: Retrieve absences for a student within a date interval.
+- **GET** `/student/absences:`: count justified or not_justified absences  within a date interval.
 
 ---
 
