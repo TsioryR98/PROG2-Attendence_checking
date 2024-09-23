@@ -185,16 +185,16 @@ paths:
           schema:
             type: integer
         - name: startDate
-          in: path
+          in: query
           required: true
           schema:
-            type: String
+            type: string
             format: date-time
         - name: endDate
-          in: path
+          in: query
           required: true
           schema:
-            type: String
+            type: string
             format: date-time
       responses:
         '200':
@@ -207,6 +207,36 @@ paths:
                   $ref: '#/components/schemas/Attendance'
         '404':
           description: No attendance records found for the given student ID and course ID
+  /student/absences:
+    get:
+      tags:
+        - Student
+      summary: Get count of justified & not_justified absences between IntervalTime
+      operationId: getCountAbsence
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: A list of attendance records inside the intervalTime and courseId
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
+        '404':
+          description: No attendance records found
   /teacher:
     get:
       tags:

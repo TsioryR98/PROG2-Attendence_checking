@@ -373,7 +373,7 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                     student.setFirstName(result.getString("firstName"));
 
                     Attendance attendance = new Attendance();
-                    attendance.setAttendenceId(result.getInt("attendenceId"));
+                    //attendance.setAttendenceId(result.getInt("attendenceId"));
                     attendance.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
                     attendance.setSession(session);
                     attendance.setStudent(student);
@@ -381,7 +381,50 @@ public class AttendenceRepository implements GenericDAO<Attendance> {
                 }
             }
         } catch (SQLException e) {
-            throw new ServerException("Error to retrieve absence inside intervallTime for missing students", e);
+            throw new ServerException("Error to retrieve absence inside intervalTime for missing students", e);
+        }
+        return absencesBetweenDates;
+    }
+
+    public List<Attendance> countAbsenceBetweenDate(LocalDateTime startDateTime, LocalDateTime endDateTime){
+        String query = "SELECT\n" +
+                "st.studentId,\n" +
+                "st.lastName,\n" +
+                "st.firstName,\n" +
+                "a.justifiedStatus,\n" +
+                "COUNT(CASE WHEN a.justifiedStatus = 'JUSTIFIED' THEN 1 END) AS justified,\n" +
+                "COUNT(CASE WHEN a.justifiedStatus = 'NOT_JUSTIFIED' THEN 1 END) AS not_Justified\n" +
+                "FROM attendance a\n" +
+                "JOIN session s ON a.sessionId = s.sessionId\n" +
+                "JOIN course c ON s.courseId = c.courseId\n" +
+                "JOIN student st ON a.studentId = st.studentId\n" +
+                "WHERE\n" +
+                "s.sessionDate BETWEEN ? AND ? \n" +
+                "AND a.attendingStatus = 'MISSING'\n" +
+                "GROUP BY st.studentId,st.lastName,st.firstName,a.justifiedStatus;";
+
+        List<Attendance> absencesBetweenDates = new ArrayList<>();
+        try (Connection conn = dataBaseConnect.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setTimestamp(1, Timestamp.valueOf(startDateTime));
+            statement.setTimestamp(2, Timestamp.valueOf(endDateTime));
+
+            try ( ResultSet result = statement.executeQuery();
+            ) {
+                while (result.next()){
+                    Student student = new Student();
+                    student.setStudentId(result.getInt("studentId"));
+                    student.setLastName(result.getString("lastName"));
+                    student.setFirstName(result.getString("firstName"));
+
+                    Attendance attendance = new Attendance();
+                    attendance.setJustifiedStatus(JustifiedStatus.valueOf(result.getString("justifiedStatus")));
+                    attendance.setStudent(student);
+                    absencesBetweenDates.add(attendance);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException("Error to retrieve absence inside intervalTime for missing students", e);
         }
         return absencesBetweenDates;
     }

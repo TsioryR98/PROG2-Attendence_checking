@@ -323,24 +323,25 @@ INNER JOIN Student s ON a.studentId = s.studentId
 INNER JOIN Session se ON a.sessionId = se.sessionId
 WHERE a.attendingStatus = 'MISSING' ORDER BY a.attendenceId ASC;
 
---14.Nombre d'absences justifiées et non justifiées pour chaque étudiant
+--14. OK Nombre d'absences justifiées et non justifiées pour chaque étudiant
 
-    SELECT
-    st.studentId,
-    st.lastName,
-    st.firstName,
-    COUNT(CASE WHEN a.justifiedStatus = 'JUSTIFIED' THEN 1 END) AS justified,
-    COUNT(CASE WHEN a.justifiedStatus = 'NOT_JUSTIFIED' THEN 1 END) AS not_Justified
-    FROM attendance a
-    JOIN session s ON a.sessionId = s.sessionId
-    JOIN course c ON s.courseId = c.courseId
-    JOIN student st ON a.studentId = st.studentId
-    WHERE
-    s.sessionDate BETWEEN '2024-01-01 11:00:00' AND '2024-01-24 11:00:00'
-    AND a.attendingStatus = 'MISSING'
-    GROUP BY st.studentId,st.lastName,st.firstName;
+SELECT
+st.studentId,
+st.lastName,
+st.firstName,
+a.justifiedStatus,
+COUNT(CASE WHEN a.justifiedStatus = 'JUSTIFIED' THEN 1 END) AS justified,
+COUNT(CASE WHEN a.justifiedStatus = 'NOT_JUSTIFIED' THEN 1 END) AS not_Justified
+FROM attendance a
+JOIN session s ON a.sessionId = s.sessionId
+JOIN course c ON s.courseId = c.courseId
+JOIN student st ON a.studentId = st.studentId
+WHERE
+s.sessionDate BETWEEN '2024-01-01 11:00:00' AND '2024-01-24 11:00:00'
+AND a.attendingStatus = 'MISSING'
+GROUP BY st.studentId,st.lastName,st.firstName,a.justifiedStatus;
 
---15.
+--OK 15. ABS entre 2 dates
  SELECT
 a.attendenceId,c.courseName,
 st.studentId, st.lastName, st.firstName

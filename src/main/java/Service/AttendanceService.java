@@ -44,4 +44,7 @@ public class AttendanceService {
     public List<Attendance> getAbsencesByInterval(int studentId,LocalDateTime startDate, LocalDateTime endDate) {
         return attendenceRepository.getAbsencesBetween(studentId,startDate, endDate);
     }
+    public List<Attendance> countAbsences(LocalDateTime startDate, LocalDateTime endDate){
+        return attendenceRepository.countAbsenceBetweenDate(startDate,endDate);
+    }
 }

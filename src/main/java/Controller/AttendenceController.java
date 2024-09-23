@@ -62,4 +62,10 @@ public class AttendenceController {
 
         return attendanceService.getAbsencesByInterval(studentId,startDateTime, endDateTime);
     }
+    @GetMapping("/student/absences")
+    public List<Attendance> getCountAbsence(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate){
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+        return attendanceService.countAbsences(startDateTime,endDateTime);
+    }
 }
