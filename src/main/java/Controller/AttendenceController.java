@@ -56,7 +56,7 @@ public class AttendenceController {
             @PathVariable int studentId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate) {
-
+        //convert into localDate as required in param
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
